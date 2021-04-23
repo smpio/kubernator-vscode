@@ -2,8 +2,6 @@ import * as vscode from 'vscode';
 import { TreeDataProvider } from './TreeDataProvider';
 
 export function activate(context: vscode.ExtensionContext) {
-	console.log('Congratulations, your extension "kubernator" is now active!');
-
 	const d = context.subscriptions.push.bind(context.subscriptions);
 
 	d(vscode.commands.registerCommand('kubernator.helloWorld', () => {
