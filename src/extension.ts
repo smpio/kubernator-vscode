@@ -10,7 +10,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Hello World from Kubernator!');
 	}));
 
-  d(vscode.window.registerTreeDataProvider('kubernator', new TreeDataProvider()));
+  d(vscode.window.registerTreeDataProvider('kubernator.treeView', new TreeDataProvider()));
 }
 
 export function deactivate() {
