@@ -10,10 +10,28 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:kubernator.helloWorld"
+    "onCommand:kubernator.helloWorld",
+    "onView:kubernator"
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "kubernator",
+          "title": "Kubernator",
+          "icon": "assets/kubernator.svg"
+        }
+      ]
+    },
+    "views": {
+      "kubernator": [
+        {
+          "id": "kubernator",
+          "name": "Kubernator"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "kubernator.helloWorld",
