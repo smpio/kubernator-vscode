@@ -28,7 +28,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 	d(treeView);
 	treeView.onDidExpandElement(e => treeDataProvider.invalidate(e.element)); // invalidate subtree cache on expand
-
 }
 
 export function deactivate() {
