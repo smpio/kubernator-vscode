@@ -39,7 +39,7 @@ class RootNode extends Node {
 
   async getChildren() {
     let namespaces = await kube.api.list(kube.api.groups[''].preferredVersion.resourcesByKind.Namespace);
-    return namespaces.map(ns => new NamespaceNode(ns));
+    return [undefined, ...namespaces].map(ns => new NamespaceNode(ns));
   }
 }
 
