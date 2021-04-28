@@ -48,6 +48,8 @@ export default class API {
   }
 
   async fetch(uri: string): Promise<any> {
+    console.debug('API request:', uri);
+
     let url = new URL(uri, this.apiURL);
     const response = await fetch(url, {
       headers: {
