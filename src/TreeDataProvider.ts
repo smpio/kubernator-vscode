@@ -52,6 +52,7 @@ class NamespaceNode extends Node {
   constructor(ns?: kube.Object) {
     let label = ns ? ns.metadata.name : GLOBAL_PSEUDO_NAMESPACE;
     super(label, vscode.TreeItemCollapsibleState.Collapsed);
+    this.contextValue = 'namespace';
     this.ns = ns;
   }
 
@@ -96,6 +97,7 @@ class GroupNode extends Node {
     let label = gv.group.name === '' ? CORE_API_GROUP_NAME : gv.group.name;
 
     super(label, collapsibleState);
+    this.contextValue = 'group';
     this.gv = gv;
     this.ns = ns;
   }
@@ -128,6 +130,7 @@ class GroupNode extends Node {
 class ResourceNode extends Node {
   constructor(public resource: kube.Resource, public ns?: kube.Object) {
     super(resource.kind, vscode.TreeItemCollapsibleState.Collapsed);
+    this.contextValue = 'resource';
   }
 
   @ttlCache(CACHE_TTL_MS)
@@ -140,6 +143,7 @@ class ResourceNode extends Node {
 class ObjectNode extends Node {
   constructor(public obj: kube.Object) {
     super(obj.metadata.name, vscode.TreeItemCollapsibleState.None);
+    this.contextValue = 'object';
   }
 
   getChildren() {
