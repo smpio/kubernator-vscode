@@ -3,6 +3,7 @@ import * as kube from './kube';
 
 const GLOBAL_PSEUDO_NAMESPACE = '[global]';
 const CORE_API_GROUP_NAME = '[core]';
+const CACHE_TTL_MS = 5000;
 
 export class TreeDataProvider implements vscode.TreeDataProvider<Node> {
   private root = new RootNode();
@@ -17,9 +18,9 @@ export class TreeDataProvider implements vscode.TreeDataProvider<Node> {
     await kube.api.ready;
 
     if (element) {
-      return element.getChildren();
+      return element.getChildrenCached();
     } else {
-      return this.root.getChildren();
+      return this.root.getChildrenCached();
     }
   }
 
@@ -29,7 +30,21 @@ export class TreeDataProvider implements vscode.TreeDataProvider<Node> {
 }
 
 abstract class Node extends vscode.TreeItem {
+  private cache: {[key: string]: any} = {};
+
   abstract getChildren(): vscode.ProviderResult<Node[]>;
+
+  getChildrenCached() {
+    let cached = this.cache.getChildren;
+    if (!cached || Date.now() - cached.time > CACHE_TTL_MS) {
+      cached = {
+        value: this.getChildren(),
+        time: Date.now(),
+      };
+      this.cache.getChildren = cached;
+    }
+    return cached.value;
+  }
 }
 
 class RootNode extends Node {
@@ -52,8 +67,9 @@ class NamespaceNode extends Node {
     this.ns = ns;
   }
 
-  getChildren() {
-    // TODO: filter empty if config.excludeEmpty + cache
+  async getChildren() {
+    let config = vscode.workspace.getConfiguration('kubernator');
+
     let groups = Object.values(kube.api.groups).sort((a, b) => {
       let name1 = a.name;
       let name2 = b.name;
@@ -66,7 +82,12 @@ class NamespaceNode extends Node {
       return name1.localeCompare(name2);
     });
     let groupVersions = groups.map(g => g.preferredVersion);
-    return groupVersions.map(gv => new GroupNode(gv, this.ns));
+    let children = groupVersions.map(gv => new GroupNode(gv, this.ns));
+
+    if (config.excludeEmpty) {
+      children = await excludeEmpty(children);
+    }
+    return children;
   }
 }
 
@@ -90,7 +111,9 @@ class GroupNode extends Node {
     this.ns = ns;
   }
 
-  getChildren() {
+  async getChildren() {
+    let config = vscode.workspace.getConfiguration('kubernator');
+
     let resourceDoesMatch = (r: kube.Resource) => {
       if (r.verbs.indexOf('list') === -1) {
         return false;
@@ -102,8 +125,13 @@ class GroupNode extends Node {
       return !!this.ns === r.namespaced;
     };
 
-    // TODO: filter empty if config.excludeEmpty + cache
-    return Object.values(this.gv.resourcesByKind).filter(resourceDoesMatch).map(r => new ResourceNode(r, this.ns));
+    let resources = Object.values(this.gv.resourcesByKind).filter(resourceDoesMatch);
+    let children = resources.map(r => new ResourceNode(r, this.ns));
+
+    if (config.excludeEmpty) {
+      children = await excludeEmpty(children);
+    }
+    return children;
   }
 }
 
@@ -126,4 +154,26 @@ class ObjectNode extends Node {
   getChildren() {
     return [];
   }
+}
+
+async function excludeEmpty<N extends Node>(nodes: N[]) {
+  return asyncFilter(nodes, async node => {
+    let children = node.getChildrenCached();
+    if (!children) {
+      return false;
+    }
+    if ('then' in children) {
+      children = await children;
+      if (!children) {
+        return false;
+      }
+    }
+
+    return children.length > 0;
+  });
+}
+
+async function asyncFilter<T>(arr: T[], predicate: (value: T) => Promise<boolean>) {
+	const results = await Promise.all(arr.map(predicate));
+	return arr.filter((_, index) => results[index]);
 }
