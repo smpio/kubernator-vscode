@@ -12,7 +12,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 	d(vscode.workspace.onDidChangeConfiguration(e => {
 		if (e.affectsConfiguration('kubernator')) {
-			kube.api.configure(config.apiURL); // TODO: check config is updated
+			config = vscode.workspace.getConfiguration('kubernator');
+			kube.api.configure(config.apiURL);
 			treeDataProvider.invalidate();
 		}
 	}));
