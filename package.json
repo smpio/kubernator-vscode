@@ -37,6 +37,29 @@
         "command": "kubernator.helloWorld",
         "title": "Hello World"
       }
+    ],
+    "configuration": [
+      {
+        "title": "Kubernator",
+        "properties": {
+          "kubernator.apiURL": {
+            "type": "string",
+            "default": "http://localhost:8001"
+          },
+          "kubernator.excludeEmpty": {
+            "type": "boolean",
+            "default": true
+          },
+          "kubernator.expandCoreGroup": {
+            "type": "boolean",
+            "default": true
+          },
+          "kubernator.expandUndottedGroups": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      }
     ]
   },
   "scripts": {
@@ -51,6 +74,7 @@
     "@types/glob": "^7.1.3",
     "@types/mocha": "^8.0.4",
     "@types/node": "^12.11.7",
+    "@types/node-fetch": "^2.5.10",
     "@types/vscode": "^1.55.0",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
     "@typescript-eslint/parser": "^4.14.1",
@@ -59,5 +83,8 @@
     "mocha": "^8.2.1",
     "typescript": "^4.1.3",
     "vscode-test": "^1.5.0"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.1"
   }
 }
