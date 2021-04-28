@@ -25,8 +25,8 @@ export class TreeDataProvider implements vscode.TreeDataProvider<Node> {
     }
   }
 
-  reset() {
-    this._onDidChangeTreeData.fire();
+  invalidate(element?: Node) {
+    this._onDidChangeTreeData.fire(element);
   }
 }
 

@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
 	d(vscode.workspace.onDidChangeConfiguration(e => {
 		if (e.affectsConfiguration('kubernator')) {
 			kube.api.configure(config.apiURL); // TODO: check config is updated
-			treeDataProvider.reset();
+			treeDataProvider.invalidate();
 		}
 	}));
 
@@ -22,6 +22,13 @@ export function activate(context: vscode.ExtensionContext) {
 	}));
 
   d(vscode.window.registerTreeDataProvider('kubernator.treeView', treeDataProvider));
+
+	let treeView = vscode.window.createTreeView('kubernator.treeView', {
+		treeDataProvider: treeDataProvider,
+	});
+
+	d(treeView);
+	treeView.onDidExpandElement(e => treeDataProvider.invalidate(e.element)); // invalidate subtree cache on expand
 }
 
 export function deactivate() {
