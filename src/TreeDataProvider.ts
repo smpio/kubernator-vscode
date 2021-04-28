@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as kube from './kube';
+import { ttlCache } from './util';
 
 const GLOBAL_PSEUDO_NAMESPACE = '[global]';
 const CORE_API_GROUP_NAME = '[core]';
@@ -18,9 +19,9 @@ export class TreeDataProvider implements vscode.TreeDataProvider<Node> {
     await kube.api.ready;
 
     if (element) {
-      return element.getChildrenCached();
+      return element.getChildren();
     } else {
-      return this.root.getChildrenCached();
+      return this.root.getChildren();
     }
   }
 
@@ -30,21 +31,7 @@ export class TreeDataProvider implements vscode.TreeDataProvider<Node> {
 }
 
 abstract class Node extends vscode.TreeItem {
-  private cache: {[key: string]: any} = {};
-
   abstract getChildren(): vscode.ProviderResult<Node[]>;
-
-  getChildrenCached() {
-    let cached = this.cache.getChildren;
-    if (!cached || Date.now() - cached.time > CACHE_TTL_MS) {
-      cached = {
-        value: this.getChildren(),
-        time: Date.now(),
-      };
-      this.cache.getChildren = cached;
-    }
-    return cached.value;
-  }
 }
 
 class RootNode extends Node {
@@ -52,6 +39,7 @@ class RootNode extends Node {
     super('', vscode.TreeItemCollapsibleState.Expanded);
   }
 
+  @ttlCache(CACHE_TTL_MS)
   async getChildren() {
     let namespaces = await kube.api.list(kube.api.groups[''].preferredVersion.resourcesByKind.Namespace);
     return [undefined, ...namespaces].map(ns => new NamespaceNode(ns));
@@ -67,6 +55,7 @@ class NamespaceNode extends Node {
     this.ns = ns;
   }
 
+  @ttlCache(CACHE_TTL_MS)
   async getChildren() {
     let config = vscode.workspace.getConfiguration('kubernator');
 
@@ -111,6 +100,7 @@ class GroupNode extends Node {
     this.ns = ns;
   }
 
+  @ttlCache(CACHE_TTL_MS)
   async getChildren() {
     let config = vscode.workspace.getConfiguration('kubernator');
 
@@ -140,6 +130,7 @@ class ResourceNode extends Node {
     super(resource.kind, vscode.TreeItemCollapsibleState.Collapsed);
   }
 
+  @ttlCache(CACHE_TTL_MS)
   async getChildren() {
     let objects = await kube.api.list(this.resource, this.ns?.metadata.name);
     return objects.map(obj => new ObjectNode(obj));
@@ -158,7 +149,7 @@ class ObjectNode extends Node {
 
 async function excludeEmpty<N extends Node>(nodes: N[]) {
   return asyncFilter(nodes, async node => {
-    let children = node.getChildrenCached();
+    let children = node.getChildren();
     if (!children) {
       return false;
     }
