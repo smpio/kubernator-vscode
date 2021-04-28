@@ -34,10 +34,27 @@
     },
     "commands": [
       {
-        "command": "kubernator.helloWorld",
-        "title": "Hello World"
+        "command": "kubernator.refresh",
+        "title": "Refresh",
+        "icon": "$(refresh)"
       }
     ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "kubernator.refresh",
+          "when": "view == kubernator.treeView",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "kubernator.refresh",
+          "when": "view == kubernator.treeView",
+          "group": "inline"
+        }
+      ]
+    },
     "configuration": [
       {
         "title": "Kubernator",

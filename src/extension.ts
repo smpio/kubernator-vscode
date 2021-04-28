@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { TreeDataProvider } from './TreeDataProvider';
+import { TreeDataProvider, Node } from './TreeDataProvider';
 import * as kube from './kube';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -18,11 +18,9 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	}));
 
-	d(vscode.commands.registerCommand('kubernator.helloWorld', () => {
-		vscode.window.showInformationMessage('Hello World from Kubernator!');
+	d(vscode.commands.registerCommand('kubernator.refresh', (node?: Node) => {
+		treeDataProvider.invalidate(node);
 	}));
-
-  d(vscode.window.registerTreeDataProvider('kubernator.treeView', treeDataProvider));
 
 	let treeView = vscode.window.createTreeView('kubernator.treeView', {
 		treeDataProvider: treeDataProvider,
@@ -30,6 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	d(treeView);
 	treeView.onDidExpandElement(e => treeDataProvider.invalidate(e.element)); // invalidate subtree cache on expand
+
 }
 
 export function deactivate() {

@@ -30,7 +30,7 @@ export class TreeDataProvider implements vscode.TreeDataProvider<Node> {
   }
 }
 
-abstract class Node extends vscode.TreeItem {
+export abstract class Node extends vscode.TreeItem {
   abstract getChildren(): vscode.ProviderResult<Node[]>;
 }
 
