@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
-import { TreeDataProvider, Node } from './TreeDataProvider';
 import * as kube from './kube';
+import { TreeDataProvider, Node } from './TreeDataProvider';
+import { ContentProvider } from './ContentProvider';
 
 export function activate(context: vscode.ExtensionContext) {
 	let d = context.subscriptions.push.bind(context.subscriptions);
@@ -28,6 +29,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	d(treeView);
 	treeView.onDidExpandElement(e => treeDataProvider.invalidate(e.element)); // invalidate subtree cache on expand
+
+	let provider = new ContentProvider();
+	d(vscode.workspace.registerTextDocumentContentProvider(ContentProvider.scheme, provider));
 }
 
 export function deactivate() {

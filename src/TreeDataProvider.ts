@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as kube from './kube';
+import * as interfaces from './interfaces';
 import { ttlCache } from './util';
 
 const GLOBAL_PSEUDO_NAMESPACE = '[global]';
@@ -144,10 +145,19 @@ class ObjectNode extends Node {
   constructor(public obj: kube.Object) {
     super(obj.metadata.name, vscode.TreeItemCollapsibleState.None);
     this.contextValue = 'object';
+    this.command = {
+      title: 'open',
+      command: 'vscode.open',
+      arguments: [vscode.Uri.parse(`${interfaces.DOCUMENT_SCHEME}:${this.objectUri}.yaml`)],
+    };
   }
 
   getChildren() {
     return [];
+  }
+
+  get objectUri() {
+    return this.obj.metadata.selfLink;
   }
 }
 

@@ -31,7 +31,7 @@ export async function discoverAllGroups(fetch: FetchFunction): Promise<{[groupNa
 async function discoverGroup(rawGroup: any, fetch: FetchFunction): Promise<Group> {
   let group = {
     name: rawGroup.name,
-    versions: [] as any,
+    versions: {} as {[version: string]: any},
     preferredVersion: null as any,
   };
 
@@ -45,7 +45,7 @@ async function discoverGroup(rawGroup: any, fetch: FetchFunction): Promise<Group
       group: group,
     };
     resources.forEach(resource => resource.groupVersion = gv);
-    group.versions.push(gv);
+    group.versions[gv.version] = gv;
     if (rawGV.groupVersion === rawGroup.preferredVersion.groupVersion) {
       group.preferredVersion = gv;
     }

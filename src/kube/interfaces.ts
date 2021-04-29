@@ -1,6 +1,6 @@
 export interface Group {
   name: string;
-  versions: GroupVersion[];
+  versions: {[version: string]: GroupVersion};
   preferredVersion: GroupVersion;
 }
 
@@ -20,8 +20,11 @@ export interface Resource {
 }
 
 export interface Object {
+  apiVersion: string;  // TODO: not in list
+  kind: string;  // TODO: not in list
   metadata: {
     name: string;
+    selfLink: string;
     namespace?: string;
   };
 }
