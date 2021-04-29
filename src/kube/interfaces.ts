@@ -20,8 +20,6 @@ export interface Resource {
 }
 
 export interface Object {
-  apiVersion: string;  // TODO: not in list
-  kind: string;  // TODO: not in list
   metadata: {
     name: string;
     selfLink: string;

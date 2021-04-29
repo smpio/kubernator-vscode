@@ -43,43 +43,6 @@ export default class API {
     return uri;
   }
 
-  // TODO: remove, not used
-  getResource(groupVersion: string, kind: string): Resource {
-    let groupName, version;
-    let separatorPos = groupVersion.indexOf('/');
-
-    if (separatorPos === -1) {
-      groupName = '';
-      version = groupVersion;
-    } else {
-      groupName = groupVersion.slice(0, separatorPos);
-      version = groupVersion.slice(separatorPos + 1);
-    }
-
-    let group = this.groups[groupName];
-    if (!group) {
-      throw new Error(`Unknown group ${groupName}`);
-    }
-
-    let gv = group.versions[version];
-    if (!gv) {
-      throw new Error(`Unknown version ${groupVersion}`);
-    }
-
-    let resource = gv.resourcesByKind[kind];
-    if (!resource) {
-      throw new Error(`Unknown kind ${kind} in group version ${groupVersion}`);
-    }
-
-    return resource;
-  }
-
-  // TODO: remove, not used
-  getObjectUri(obj: Object): string {
-    let resource = this.getResource(obj.apiVersion, obj.kind);
-    return this.getResourceUri(resource, obj.metadata.namespace) + '/' + obj.metadata.name;
-  }
-
   async fetch(uri: string, contentType = 'application/json'): Promise<any> {
     console.debug('API request:', uri);
 
