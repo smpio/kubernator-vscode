@@ -10,6 +10,7 @@
     "Other"
   ],
   "activationEvents": [
+    "onFileSystem:kube",
     "onView:kubernator.treeView"
   ],
   "main": "./out/extension.js",
