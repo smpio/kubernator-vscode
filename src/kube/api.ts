@@ -44,40 +44,70 @@ export default class API {
     return uri;
   }
 
-  async fetch(uri: string, contentType = 'application/json'): Promise<Response> {
-    return this.request('GET', uri, contentType);
+  async fetch(uri: string, accept = 'application/json'): Promise<Response> {
+    return this.request('GET', uri, {accept});
   }
 
-  async put(uri: string, body: BodyInit, contentType = 'application/json'): Promise<Response> {
-    return this.request('PUT', uri, contentType, body);
+  async put(uri: string, body: BodyInit, contentType = 'application/json', accept = 'application/json'): Promise<Response> {
+    return this.request('PUT', uri, {body, contentType, accept});
   }
 
-  async delete(uri: string, contentType = 'application/json'): Promise<Response> {
-    return this.request('DELETE', uri, contentType);
+  async delete(uri: string, accept = 'application/json'): Promise<Response> {
+    return this.request('DELETE', uri, {accept});
   }
 
-  async request(method: string, uri: string, contentType: string, body?: BodyInit): Promise<Response> {
+  async request(method: string, uri: string, options: {accept: string, contentType?: string, body?: BodyInit}): Promise<Response> {
     console.debug(method, uri);
 
     let url = new URL(uri, this.apiURL);
     let headers: any = {
-      Accept: contentType,  // eslint-disable-line @typescript-eslint/naming-convention
+      Accept: options.accept,  // eslint-disable-line @typescript-eslint/naming-convention
     };
 
-    if (body) {
-      headers['Content-Type'] = contentType;
+    if (options.contentType) {
+      headers['Content-Type'] = options.contentType;
     }
 
     let response = await fetch(url, {
       method: method,
-      body: body,
+      body: options.body,
       headers: headers,
     });
 
     if (!response.ok) {
-      throw Error(`${method} ${uri}: ${response.status}: ${response.statusText}`);
+      let err = await APIError.fromResponse(response);
+      throw err;
     }
 
     return response;
+  }
+}
+
+class APIError extends Error {
+  response: Response;
+
+  constructor(response: Response, message?: string) {
+    if (message) {
+      super(message);
+    } else {
+      super(`${response.status} ${response.statusText}`);
+    }
+
+    this.name = this.constructor.name;
+    this.response = response;
+  }
+
+  static async fromResponse(response: Response) {
+    let message;
+
+    try {
+      let errorData = await response.json();
+      if (errorData.apiVersion === 'v1' && errorData.kind === 'Status') {
+        message = errorData.message;
+      }
+    } catch (err) {
+    }
+
+    return new APIError(response, message);
   }
 }

@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as kube from './kube';
 import * as interfaces from './interfaces';
 
-const EXT_CTYPE_MAP = {
+const EXT_MIMETYPE_MAP = {
   '.yaml': 'application/yaml',
   '.json': 'application/json',
 };
@@ -68,8 +68,8 @@ export class FSProvider implements vscode.FileSystemProvider {
 
   async readFile(uri: vscode.Uri): Promise<Uint8Array> {
     await kube.api.ready;
-    let {path, contentType} = explodeUri(uri);
-    return kube.api.fetch(path, contentType).then(r => r.buffer());
+    let {path, mimetype} = explodeUri(uri);
+    return kube.api.fetch(path, mimetype).then(r => r.buffer());
   }
 
   async writeFile(uri: vscode.Uri, content: Uint8Array, options: { create: boolean; overwrite: boolean; }): Promise<void> {
@@ -78,14 +78,14 @@ export class FSProvider implements vscode.FileSystemProvider {
     }
 
     await kube.api.ready;
-    let {path, contentType} = explodeUri(uri);
-    await kube.api.put(path, content, contentType);
+    let {path, mimetype} = explodeUri(uri);
+    await kube.api.put(path, content, mimetype);
     this.forceReloadFiles.add(uri.path);
   }
 
   async delete(uri: vscode.Uri, options: { recursive: boolean; }): Promise<void> {
     await kube.api.ready;
-    let {path, contentType} = explodeUri(uri);
+    let {path} = explodeUri(uri);
     await kube.api.delete(path);
   }
 
@@ -94,17 +94,17 @@ export class FSProvider implements vscode.FileSystemProvider {
   }
 }
 
-function explodeUri(uri: vscode.Uri): {path: string, contentType?: string} {
+function explodeUri(uri: vscode.Uri): {path: string, mimetype?: string} {
   let path = uri.path;
-  let contentType = undefined;
+  let mimetype = undefined;
 
-  for (let [ext, ctype] of Object.entries(EXT_CTYPE_MAP)) {
+  for (let [ext, mtype] of Object.entries(EXT_MIMETYPE_MAP)) {
     if (path.endsWith(ext)) {
       path = path.slice(0, -ext.length);
-      contentType = ctype;
+      mimetype = mtype;
       break;
     }
   }
 
-  return {path, contentType};
+  return {path, mimetype};
 }
