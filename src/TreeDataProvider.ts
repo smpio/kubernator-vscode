@@ -136,8 +136,16 @@ class ResourceNode extends Node {
 
   @ttlCache(CACHE_TTL_MS)
   async getChildren() {
-    let objects = await kube.api.list(this.resource, this.ns?.metadata.name);
-    return objects.map(obj => new ObjectNode(obj, this));
+    try {
+      let objects = await kube.api.list(this.resource, this.ns?.metadata.name);
+      return objects.map(obj => new ObjectNode(obj, this));
+    } catch(err) {
+      if (err instanceof kube.APIError) {
+        return [new ErrorNode(err)];
+      } else {
+        throw err;
+      }
+    }
   }
 }
 
@@ -160,8 +168,22 @@ export class ObjectNode extends Node {
     return this.obj.metadata.selfLink;
   }
 
+  // TODO: rename to resourceUri
   get providerUri() {
     return vscode.Uri.parse(`${interfaces.DOCUMENT_SCHEME}:${this.objectUri}.yaml`);
+  }
+}
+
+class ErrorNode extends Node {
+  constructor(public readonly err: Error) {
+    super('Error: ' + err.message, vscode.TreeItemCollapsibleState.None);
+    this.tooltip = err.message;
+    this.contextValue = 'error';
+    // this.iconPath = new vscode.ThemeIcon('error', new vscode.ThemeColor('errorForeground'));
+  }
+
+  getChildren() {
+    return [];
   }
 }
 
@@ -178,7 +200,7 @@ async function excludeEmpty<N extends Node>(nodes: N[]) {
       }
     }
 
-    return children.length > 0;
+    return children.some(child => child.contextValue !== 'error');
   });
 }
 

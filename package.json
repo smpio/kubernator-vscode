@@ -55,7 +55,7 @@
       "view/item/context": [
         {
           "command": "kubernator.refresh",
-          "when": "view == kubernator.treeView && viewItem != 'object'",
+          "when": "view == kubernator.treeView && viewItem != 'object' && viewItem != 'error'",
           "group": "inline"
         },
         {

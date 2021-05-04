@@ -83,7 +83,7 @@ export default class API {
   }
 }
 
-class APIError extends Error {
+export class APIError extends Error {
   response: Response;
 
   constructor(response: Response, message?: string) {
