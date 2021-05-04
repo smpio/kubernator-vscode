@@ -52,6 +52,10 @@ export default class API {
     return this.request('PUT', uri, contentType, body);
   }
 
+  async delete(uri: string, contentType = 'application/json'): Promise<Response> {
+    return this.request('DELETE', uri, contentType);
+  }
+
   async request(method: string, uri: string, contentType: string, body?: BodyInit): Promise<Response> {
     console.debug(method, uri);
 
@@ -71,7 +75,7 @@ export default class API {
     });
 
     if (!response.ok) {
-      throw Error(`${method} ${uri} failed: ${response.status}: ${response.statusText}`);
+      throw Error(`${method} ${uri}: ${response.status}: ${response.statusText}`);
     }
 
     return response;

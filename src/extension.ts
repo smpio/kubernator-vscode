@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as kube from './kube';
-import { TreeDataProvider, Node } from './TreeDataProvider';
+import { TreeDataProvider, Node, ObjectNode } from './TreeDataProvider';
 import { FSProvider } from './FSProvider';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -33,6 +33,11 @@ export function activate(context: vscode.ExtensionContext) {
 	let fsProvider = new FSProvider();
 	d(vscode.workspace.registerFileSystemProvider(FSProvider.scheme, fsProvider, {
 		isCaseSensitive: true,
+	}));
+
+	d(vscode.commands.registerCommand('kubernator.delete', async (node: ObjectNode) => {
+		await fsProvider.delete(node.providerUri, {recursive: false});
+		treeDataProvider.invalidate(node.parent);
 	}));
 }
 

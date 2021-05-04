@@ -2,6 +2,10 @@ import * as vscode from 'vscode';
 import * as kube from './kube';
 import * as interfaces from './interfaces';
 
+const EXT_CTYPE_MAP = {
+  '.yaml': 'application/yaml',
+  '.json': 'application/json',
+};
 
 export class FSProvider implements vscode.FileSystemProvider {
 	static scheme = interfaces.DOCUMENT_SCHEME;
@@ -64,15 +68,7 @@ export class FSProvider implements vscode.FileSystemProvider {
 
   async readFile(uri: vscode.Uri): Promise<Uint8Array> {
     await kube.api.ready;
-
-    let path = uri.path;
-    let contentType = undefined;
-
-    if (path.endsWith('.yaml')) {
-      path = path.slice(0, -5);
-      contentType = 'application/yaml';
-    }
-
+    let {path, contentType} = explodeUri(uri);
     return kube.api.fetch(path, contentType).then(r => r.buffer());
   }
 
@@ -82,24 +78,33 @@ export class FSProvider implements vscode.FileSystemProvider {
     }
 
     await kube.api.ready;
-
-    let path = uri.path;
-    let contentType = undefined;
-
-    if (path.endsWith('.yaml')) {
-      path = path.slice(0, -5);
-      contentType = 'application/yaml';
-    }
-
+    let {path, contentType} = explodeUri(uri);
     await kube.api.put(path, content, contentType);
     this.forceReloadFiles.add(uri.path);
   }
 
-  delete(uri: vscode.Uri, options: { recursive: boolean; }): void | Thenable<void> {
-    throw new Error('Not implemented.');
+  async delete(uri: vscode.Uri, options: { recursive: boolean; }): Promise<void> {
+    await kube.api.ready;
+    let {path, contentType} = explodeUri(uri);
+    await kube.api.delete(path);
   }
 
   rename(oldUri: vscode.Uri, newUri: vscode.Uri, options: { overwrite: boolean; }): void | Thenable<void> {
     throw new Error('Not implemented.');
   }
+}
+
+function explodeUri(uri: vscode.Uri): {path: string, contentType?: string} {
+  let path = uri.path;
+  let contentType = undefined;
+
+  for (let [ext, ctype] of Object.entries(EXT_CTYPE_MAP)) {
+    if (path.endsWith(ext)) {
+      path = path.slice(0, -ext.length);
+      contentType = ctype;
+      break;
+    }
+  }
+
+  return {path, contentType};
 }

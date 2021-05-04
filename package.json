@@ -37,6 +37,11 @@
         "command": "kubernator.refresh",
         "title": "Refresh",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "kubernator.delete",
+        "title": "Delete",
+        "icon": "$(trash)"
       }
     ],
     "menus": {
@@ -52,6 +57,10 @@
           "command": "kubernator.refresh",
           "when": "view == kubernator.treeView && viewItem != 'object'",
           "group": "inline"
+        },
+        {
+          "command": "kubernator.delete",
+          "when": "view == kubernator.treeView && viewItem == 'object'"
         }
       ]
     },

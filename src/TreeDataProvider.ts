@@ -137,18 +137,18 @@ class ResourceNode extends Node {
   @ttlCache(CACHE_TTL_MS)
   async getChildren() {
     let objects = await kube.api.list(this.resource, this.ns?.metadata.name);
-    return objects.map(obj => new ObjectNode(obj));
+    return objects.map(obj => new ObjectNode(obj, this));
   }
 }
 
-class ObjectNode extends Node {
-  constructor(public obj: kube.Object) {
+export class ObjectNode extends Node {
+  constructor(public obj: kube.Object, public parent: ResourceNode) {
     super(obj.metadata.name, vscode.TreeItemCollapsibleState.None);
     this.contextValue = 'object';
     this.command = {
       title: 'open',
       command: 'vscode.open',
-      arguments: [vscode.Uri.parse(`${interfaces.DOCUMENT_SCHEME}:${this.objectUri}.yaml`)],
+      arguments: [this.providerUri],
     };
   }
 
@@ -158,6 +158,10 @@ class ObjectNode extends Node {
 
   get objectUri() {
     return this.obj.metadata.selfLink;
+  }
+
+  get providerUri() {
+    return vscode.Uri.parse(`${interfaces.DOCUMENT_SCHEME}:${this.objectUri}.yaml`);
   }
 }
 
