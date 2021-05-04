@@ -1,4 +1,4 @@
-import fetch, { Response } from 'node-fetch';
+import fetch, { Response, BodyInit } from 'node-fetch';
 import { URL } from 'url';
 import * as discovery from './discovery';
 import { Group, Resource, Object } from './interfaces';
@@ -45,17 +45,33 @@ export default class API {
   }
 
   async fetch(uri: string, contentType = 'application/json'): Promise<Response> {
-    console.debug('API request:', uri);
+    return this.request('GET', uri, contentType);
+  }
+
+  async put(uri: string, body: BodyInit, contentType = 'application/json'): Promise<Response> {
+    return this.request('PUT', uri, contentType, body);
+  }
+
+  async request(method: string, uri: string, contentType: string, body?: BodyInit): Promise<Response> {
+    console.debug(method, uri);
 
     let url = new URL(uri, this.apiURL);
-    const response = await fetch(url, {
-      headers: {
-        Accept: contentType,  // eslint-disable-line @typescript-eslint/naming-convention
-      },
+    let headers: any = {
+      Accept: contentType,  // eslint-disable-line @typescript-eslint/naming-convention
+    };
+
+    if (body) {
+      headers['Content-Type'] = contentType;
+    }
+
+    let response = await fetch(url, {
+      method: method,
+      body: body,
+      headers: headers,
     });
 
     if (!response.ok) {
-      throw Error(`HTTP error ${response.status}: ${response.statusText}`);
+      throw Error(`${method} ${uri} failed: ${response.status}: ${response.statusText}`);
     }
 
     return response;
