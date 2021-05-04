@@ -150,13 +150,16 @@ class ResourceNode extends Node {
 }
 
 export class ObjectNode extends Node {
+  resourceUri: vscode.Uri;
+
   constructor(public obj: kube.Object, public parent: ResourceNode) {
     super(obj.metadata.name, vscode.TreeItemCollapsibleState.None);
     this.contextValue = 'object';
+    this.resourceUri = vscode.Uri.parse(`${interfaces.DOCUMENT_SCHEME}:${this.objectUri}.yaml`);
     this.command = {
       title: 'open',
       command: 'vscode.open',
-      arguments: [this.providerUri],
+      arguments: [this.resourceUri],
     };
   }
 
@@ -166,11 +169,6 @@ export class ObjectNode extends Node {
 
   get objectUri() {
     return this.obj.metadata.selfLink;
-  }
-
-  // TODO: rename to resourceUri
-  get providerUri() {
-    return vscode.Uri.parse(`${interfaces.DOCUMENT_SCHEME}:${this.objectUri}.yaml`);
   }
 }
 

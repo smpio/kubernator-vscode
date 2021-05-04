@@ -36,7 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
 	}));
 
 	d(vscode.commands.registerCommand('kubernator.delete', async (node: ObjectNode) => {
-		await fsProvider.delete(node.providerUri, {recursive: false});
+		await fsProvider.delete(node.resourceUri, {recursive: false});
 		treeDataProvider.invalidate(node.parent);
 	}));
 }
