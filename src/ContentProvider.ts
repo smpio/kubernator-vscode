@@ -17,6 +17,6 @@ export class ContentProvider implements vscode.TextDocumentContentProvider {
       contentType = 'application/yaml';
     }
 
-    return kube.api.fetch(path, contentType);
+    return kube.api.fetch(path, contentType).then(r => r.text());
   }
 }
