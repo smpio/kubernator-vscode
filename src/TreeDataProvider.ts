@@ -187,17 +187,10 @@ class ErrorNode extends Node {
 
 async function excludeEmpty<N extends Node>(nodes: N[]) {
   return asyncFilter(nodes, async node => {
-    let children = node.getChildren();
+    let children = await Promise.resolve(node.getChildren());
     if (!children) {
       return false;
     }
-    if ('then' in children) {
-      children = await children;
-      if (!children) {
-        return false;
-      }
-    }
-
     return children.some(child => child.contextValue !== 'error');
   });
 }
