@@ -11,7 +11,8 @@
   ],
   "activationEvents": [
     "onFileSystem:kube",
-    "onView:kubernator.treeView"
+    "onView:kubernator.treeView",
+    "onCommand:kubernator.create"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -36,15 +37,29 @@
       {
         "command": "kubernator.refresh",
         "title": "Refresh",
-        "icon": "$(refresh)"
+        "icon": "$(refresh)",
+        "category": "Kubernator"
       },
       {
         "command": "kubernator.delete",
         "title": "Delete",
-        "icon": "$(trash)"
+        "icon": "$(trash)",
+        "category": "Kubernator"
+      },
+      {
+        "command": "kubernator.create",
+        "title": "Create object from active editor",
+        "icon": "$(save)",
+        "category": "Kubernator"
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "kubernator.create",
+          "when": "editorLangId == yaml"
+        }
+      ],
       "view/title": [
         {
           "command": "kubernator.refresh",
@@ -111,6 +126,7 @@
     "vscode-test": "^1.5.0"
   },
   "dependencies": {
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "yaml": "^1.10.2"
   }
 }

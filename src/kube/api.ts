@@ -86,6 +86,10 @@ export default class API {
     return this.request('DELETE', uri, {accept});
   }
 
+  async post(uri: string, body: BodyInit, contentType = 'application/json', accept = 'application/json'): Promise<Response> {
+    return this.request('POST', uri, {body, contentType, accept});
+  }
+
   async request(method: string, uri: string, options: {accept: string, contentType?: string, body?: BodyInit}): Promise<Response> {
     console.debug(method, uri);
 
