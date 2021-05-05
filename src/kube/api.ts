@@ -44,6 +44,36 @@ export default class API {
     return uri;
   }
 
+  getResource(groupVersion: string, kind: string): Resource {
+    let groupName, version;
+    let separatorPos = groupVersion.indexOf('/');
+
+    if (separatorPos === -1) {
+      groupName = '';
+      version = groupVersion;
+    } else {
+      groupName = groupVersion.slice(0, separatorPos);
+      version = groupVersion.slice(separatorPos + 1);
+    }
+
+    let group = this.groups[groupName];
+    if (!group) {
+      throw new Error(`Unknown group ${groupName}`);
+    }
+
+    let gv = group.versions[version];
+    if (!gv) {
+      throw new Error(`Unknown version ${groupVersion}`);
+    }
+
+    let resource = gv.resourcesByKind[kind];
+    if (!resource) {
+      throw new Error(`Unknown kind ${kind} in group version ${groupVersion}`);
+    }
+
+    return resource;
+  }
+
   async fetch(uri: string, accept = 'application/json'): Promise<Response> {
     return this.request('GET', uri, {accept});
   }
