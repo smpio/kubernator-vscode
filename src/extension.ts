@@ -3,6 +3,7 @@ import * as YAML from 'yaml';
 import * as kube from './kube';
 import { TreeDataProvider, Node, ObjectNode } from './TreeDataProvider';
 import { FSProvider } from './FSProvider';
+import { objectUri } from './util';
 
 export function activate(context: vscode.ExtensionContext) {
 	let d = context.subscriptions.push.bind(context.subscriptions);
@@ -67,11 +68,13 @@ async function createObjectFromActiveEditor() {
 	}
 
 	let resource = kube.api.getResource(obj.apiVersion, obj.kind);
-	let uri = kube.api.getResourceUri(resource, obj.metadata?.namespace);
+	let postUri = kube.api.getResourceUri(resource, obj.metadata?.namespace);
 
-	obj = await kube.api.post(uri, JSON.stringify(obj));
+	obj = await kube.api.post(postUri, text, 'application/yaml').then(r => r.json());
 
-	// TODO: replace tab with 'kube:... file'
+	// vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+	vscode.commands.executeCommand('vscode.open', objectUri(obj));
+	// vscode.window.showTextDocument(objectUri(obj), { preview: false });
 }
 
 function handleCommandErrors<F extends (...a: any) => any>(fn: F): (...a: Parameters<F>) => Promise<ReturnType<F>> {

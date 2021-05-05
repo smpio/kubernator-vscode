@@ -1,3 +1,7 @@
+import * as vscode from 'vscode';
+import * as interfaces from './interfaces';
+import * as kube from './kube';
+
 const CACHE_PROP = Symbol('ttlCache');
 
 export function ttlCache(ttlMs: number) {
@@ -16,4 +20,8 @@ export function ttlCache(ttlMs: number) {
       return cache.value;
     };
   };
+}
+
+export function objectUri(obj: kube.Object) {
+  return vscode.Uri.parse(`${interfaces.DOCUMENT_SCHEME}:${obj.metadata.selfLink}.yaml`);
 }

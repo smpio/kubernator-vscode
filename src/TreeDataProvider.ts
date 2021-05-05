@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as kube from './kube';
 import * as interfaces from './interfaces';
-import { ttlCache } from './util';
+import { ttlCache, objectUri } from './util';
 
 const GLOBAL_PSEUDO_NAMESPACE = '[global]';
 const CORE_API_GROUP_NAME = '[core]';
@@ -155,7 +155,7 @@ export class ObjectNode extends Node {
   constructor(public obj: kube.Object, public parent: ResourceNode) {
     super(obj.metadata.name, vscode.TreeItemCollapsibleState.None);
     this.contextValue = 'object';
-    this.resourceUri = vscode.Uri.parse(`${interfaces.DOCUMENT_SCHEME}:${this.objectUri}.yaml`);
+    this.resourceUri = objectUri(obj);
     this.command = {
       title: 'open',
       command: 'vscode.open',
@@ -165,10 +165,6 @@ export class ObjectNode extends Node {
 
   getChildren() {
     return [];
-  }
-
-  get objectUri() {
-    return this.obj.metadata.selfLink;
   }
 }
 
