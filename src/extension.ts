@@ -36,6 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
 		isCaseSensitive: true,
 	}));
 
+	// TODO: can be called without argument (using command palette)
 	d(vscode.commands.registerCommand('kubernator.delete', async (node: ObjectNode) => {
 		await fsProvider.delete(node.resourceUri, {recursive: false});
 		treeDataProvider.invalidate(node.parent);
