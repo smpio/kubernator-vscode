@@ -1,4 +1,3 @@
-copy (clean) - https://eemeli.org/yaml/v1/#parsecst
 discover only preferred
 search for TODO
 start kubectl proxy with extension (example: https://code.visualstudio.com/api/language-extensions/language-server-extension-guide)
