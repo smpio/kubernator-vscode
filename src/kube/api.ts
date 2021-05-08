@@ -32,6 +32,10 @@ export default class API {
           continue;
         }
 
+        if ('properties' in def && def.properties?.status) {
+          def.properties.status.readOnly = true;
+        }
+
         for (let gvk of gvks) {
           let group = this.groups[gvk.group];
           if (!group) {
