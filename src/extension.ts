@@ -106,10 +106,18 @@ async function cleanObjectInActiveEditor() {
 
 	cleanYamlRecursive(doc.contents, resource.definition);
 
-	let all = new vscode.Range(new vscode.Position(0, 0), new vscode.Position(document.lineCount, 0));
-	editor.edit(editBuilder => {
-		editBuilder.replace(all, doc.toString());
-	});
+	if (document.isUntitled) {
+		let all = new vscode.Range(new vscode.Position(0, 0), new vscode.Position(document.lineCount, 0));
+		editor.edit(editBuilder => {
+			editBuilder.replace(all, doc.toString());
+		});
+	} else {
+		document = await vscode.workspace.openTextDocument({
+			content: doc.toString(),
+			language: document.languageId,
+		});
+		vscode.window.showTextDocument(document);
+	}
 }
 
 function cleanYamlRecursive(yaml: YAMLMap, def: Definition) {
