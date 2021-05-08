@@ -17,6 +17,7 @@ export interface Resource {
   name: string;
   namespaced: boolean;
   verbs: string[];
+  definition?: Definition;
 }
 
 export interface Object {
@@ -25,4 +26,36 @@ export interface Object {
     selfLink: string;
     namespace?: string;
   };
+}
+
+export type Definition = PrimitiveDefinition | ObjectDefinition | ArrayDefinition | RefDefinition;
+
+export interface DefinitionCommon {
+  description: string;
+  ['x-kubernetes-group-version-kind']?: DefinitionGVK[];
+  readOnly: boolean;
+}
+
+export interface PrimitiveDefinition extends DefinitionCommon {
+  type: 'string' | 'boolean' | 'integer';
+}
+
+export interface ObjectDefinition extends DefinitionCommon {
+  type?: 'object';
+  properties?: {[name: string]: Definition};
+}
+
+export interface ArrayDefinition extends DefinitionCommon {
+  type: 'array';
+  items: Definition;
+}
+
+export interface RefDefinition extends DefinitionCommon {
+  $ref: string;
+}
+
+export interface DefinitionGVK {
+  group: string;
+  version: string;
+  kind: string;
 }

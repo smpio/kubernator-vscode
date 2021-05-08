@@ -12,7 +12,8 @@
   "activationEvents": [
     "onFileSystem:kube",
     "onView:kubernator.treeView",
-    "onCommand:kubernator.create"
+    "onCommand:kubernator.create",
+    "onCommand:kubernator.clean"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -51,12 +52,21 @@
         "title": "Create object from active editor",
         "icon": "$(save)",
         "category": "Kubernator"
+      },
+      {
+        "command": "kubernator.clean",
+        "title": "Clean object in active editor",
+        "category": "Kubernator"
       }
     ],
     "menus": {
       "commandPalette": [
         {
           "command": "kubernator.create",
+          "when": "editorLangId == yaml"
+        },
+        {
+          "command": "kubernator.clean",
           "when": "editorLangId == yaml"
         }
       ],

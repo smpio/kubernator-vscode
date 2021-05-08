@@ -1,12 +1,14 @@
 import fetch, { Response, BodyInit } from 'node-fetch';
 import { URL } from 'url';
 import * as discovery from './discovery';
-import { Group, Resource, Object } from './interfaces';
+import * as openapi from './openapi';
+import { Group, Resource, Object, Definition } from './interfaces';
 
 export default class API {
   apiURL?: string;
   ready: Promise<void> = new Promise(() => {});
   groups: {[groupName: string]: Group} = {};
+  definitions: {[id: string]: Definition} = {};
 
   constructor(apiURL?: string) {
     if (apiURL) {
@@ -17,9 +19,35 @@ export default class API {
   configure(apiURL: string): Promise<void> {
     this.apiURL = apiURL;
     this.groups = {};
+
     return this.ready = (async () => {
       let fetch = (uri: string) => this.fetch(uri).then(r => r.json());
+      let definitionsPromise = openapi.loadDefinitions(fetch);
       this.groups = await discovery.discoverAllGroups(fetch);
+      this.definitions = await definitionsPromise;
+
+      for (let def of Object.values(this.definitions)) {
+        let gvks = def['x-kubernetes-group-version-kind'];
+        if (!gvks) {
+          continue;
+        }
+
+        for (let gvk of gvks) {
+          let group = this.groups[gvk.group];
+          if (!group) {
+            continue;
+          }
+          let groupVersion = group.versions[gvk.version];
+          if (!groupVersion) {
+            continue;
+          }
+          let resource = groupVersion.resourcesByKind[gvk.kind];
+          if (!resource) {
+            continue;
+          }
+          resource.definition = def;
+        }
+      }
     })();
   }
 

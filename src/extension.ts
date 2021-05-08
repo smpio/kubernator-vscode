@@ -4,6 +4,8 @@ import * as kube from './kube';
 import { TreeDataProvider, Node, ObjectNode } from './TreeDataProvider';
 import { FSProvider } from './FSProvider';
 import { objectUri } from './util';
+import { Definition } from './kube/interfaces';
+import { YAMLMap } from 'yaml/types';
 
 export function activate(context: vscode.ExtensionContext) {
 	let d = context.subscriptions.push.bind(context.subscriptions);
@@ -44,6 +46,7 @@ export function activate(context: vscode.ExtensionContext) {
 	}));
 
 	d(vscode.commands.registerCommand('kubernator.create', handleCommandErrors(createObjectFromActiveEditor)));
+	d(vscode.commands.registerCommand('kubernator.clean', handleCommandErrors(cleanObjectInActiveEditor)));
 }
 
 export function deactivate() {
@@ -75,6 +78,68 @@ async function createObjectFromActiveEditor() {
 	// vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	vscode.commands.executeCommand('vscode.open', objectUri(obj));
 	// vscode.window.showTextDocument(objectUri(obj), { preview: false });
+}
+
+async function cleanObjectInActiveEditor() {
+	let editor = vscode.window.activeTextEditor;
+	if (!editor) {
+		return;
+	}
+
+	let document = editor.document;
+	let text = document.getText();
+	//let cstDocs = YAML.parseCST(text);
+	let doc = YAML.parseDocument(text);
+
+	let obj = doc.toJSON();
+
+	let resource = kube.api.getResource(obj.apiVersion, obj.kind);
+
+	if (!resource.definition) {
+		vscode.window.showInformationMessage(`No definition for ${obj.apiVersion} ${obj.kind}`);
+		return;
+	}
+
+	if (doc.contents?.type !== 'MAP') {
+		return;
+	}
+
+	cleanYamlRecursive(doc.contents, resource.definition);
+
+	let all = new vscode.Range(new vscode.Position(0, 0), new vscode.Position(document.lineCount, 0));
+	editor.edit(editBuilder => {
+		editBuilder.replace(all, doc.toString());
+	});
+}
+
+function cleanYamlRecursive(yaml: YAMLMap, def: Definition) {
+	if ('$ref' in def) {
+		def = kube.api.definitions[def.$ref];
+		if (!def) {
+			return;
+		}
+	}
+
+	yaml.items = yaml.items.filter(pair => {
+		if (!('properties' in def)) {
+			return true;
+		}
+
+		let subdef = def.properties?.[pair.key.value];
+		if (!subdef) {
+			return true;
+		}
+
+		if (subdef.readOnly) {
+			return false;
+		}
+
+		if (pair.value.type === 'MAP') {
+			cleanYamlRecursive(pair.value, subdef);
+		}
+
+		return true;
+	});
 }
 
 function handleCommandErrors<F extends (...a: any) => any>(fn: F): (...a: Parameters<F>) => Promise<ReturnType<F>> {
