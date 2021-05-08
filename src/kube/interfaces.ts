@@ -37,12 +37,13 @@ export interface DefinitionCommon {
 }
 
 export interface PrimitiveDefinition extends DefinitionCommon {
-  type: 'string' | 'boolean' | 'integer';
+  type: 'string' | 'boolean' | 'integer' | 'number';
+  default?: any;
 }
 
 export interface ObjectDefinition extends DefinitionCommon {
-  type?: 'object';
-  properties?: {[name: string]: Definition};
+  type: 'object';
+  properties: {[name: string]: Definition};
 }
 
 export interface ArrayDefinition extends DefinitionCommon {

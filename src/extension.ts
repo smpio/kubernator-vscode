@@ -141,6 +141,12 @@ function cleanYamlRecursive(yaml: any, def: Definition) {
 
 		if (subdef.readOnly) {
 			delete yaml[k];
+			continue;
+		}
+
+		if ('default' in subdef && v === subdef.default) {
+			delete yaml[k];
+			continue;
 		}
 
 		if (typeof v === 'object' && v) {
