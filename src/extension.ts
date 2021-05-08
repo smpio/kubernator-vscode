@@ -88,10 +88,11 @@ async function cleanObjectInActiveEditor() {
 
 	let document = editor.document;
 	let text = document.getText();
-	//let cstDocs = YAML.parseCST(text);
-	let doc = YAML.parseDocument(text);
+	let obj = YAML.parse(text);
 
-	let obj = doc.toJSON();
+	if (typeof obj !== 'object') {
+		return;
+	}
 
 	let resource = kube.api.getResource(obj.apiVersion, obj.kind);
 
@@ -100,27 +101,27 @@ async function cleanObjectInActiveEditor() {
 		return;
 	}
 
-	if (doc.contents?.type !== 'MAP') {
-		return;
-	}
+	cleanYamlRecursive(obj, resource.definition);
 
-	cleanYamlRecursive(doc.contents, resource.definition);
+	text = YAML.stringify(obj, {
+		indentSeq: false,
+	});
 
 	if (document.isUntitled) {
 		let all = new vscode.Range(new vscode.Position(0, 0), new vscode.Position(document.lineCount, 0));
 		editor.edit(editBuilder => {
-			editBuilder.replace(all, doc.toString());
+			editBuilder.replace(all, text);
 		});
 	} else {
 		document = await vscode.workspace.openTextDocument({
-			content: doc.toString(),
+			content: text,
 			language: document.languageId,
 		});
 		vscode.window.showTextDocument(document);
 	}
 }
 
-function cleanYamlRecursive(yaml: YAMLMap, def: Definition) {
+function cleanYamlRecursive(yaml: any, def: Definition) {
 	if ('$ref' in def) {
 		def = kube.api.definitions[def.$ref];
 		if (!def) {
@@ -128,26 +129,24 @@ function cleanYamlRecursive(yaml: YAMLMap, def: Definition) {
 		}
 	}
 
-	yaml.items = yaml.items.filter(pair => {
-		if (!('properties' in def)) {
-			return true;
-		}
+	if (!('properties' in def)) {
+		return;
+	}
 
-		let subdef = def.properties?.[pair.key.value];
+	for (let [k, v] of Object.entries(yaml)) {
+		let subdef = def.properties?.[k];
 		if (!subdef) {
-			return true;
+			continue;
 		}
 
 		if (subdef.readOnly) {
-			return false;
+			delete yaml[k];
 		}
 
-		if (pair.value.type === 'MAP') {
-			cleanYamlRecursive(pair.value, subdef);
+		if (typeof v === 'object' && v) {
+			cleanYamlRecursive(v, subdef);
 		}
-
-		return true;
-	});
+	}
 }
 
 function handleCommandErrors<F extends (...a: any) => any>(fn: F): (...a: Parameters<F>) => Promise<ReturnType<F>> {
