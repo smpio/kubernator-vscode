@@ -3,6 +3,7 @@
   "displayName": "Kubernator",
   "description": "Kubernetes object tree editor",
   "version": "0.0.1",
+  "publisher": "smpio",
   "engines": {
     "vscode": "^1.55.0"
   },
@@ -119,6 +120,7 @@
     ]
   },
   "scripts": {
+    "vscode:package": "npx vsce package",
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
@@ -138,6 +140,7 @@
     "glob": "^7.1.6",
     "mocha": "^8.2.1",
     "typescript": "^4.1.3",
+    "vsce": "^1.88.0",
     "vscode-test": "^1.5.0"
   },
   "dependencies": {
