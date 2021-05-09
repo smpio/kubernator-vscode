@@ -13,6 +13,7 @@ export async function loadDefinitions(fetch: FetchFunction) {
       def.readOnly = RO_REGEX.test(def.description);
 
       if ('$ref' in def) {
+        def.type = 'ref';
         if (!def.$ref.startsWith(REF_PREFIX)) {
           throw new Error('Unknown ref: ' + def.$ref);
         }

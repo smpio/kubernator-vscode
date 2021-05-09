@@ -31,6 +31,7 @@ export interface Object {
 export type Definition = PrimitiveDefinition | ObjectDefinition | ArrayDefinition | RefDefinition;
 
 export interface DefinitionCommon {
+  type: string;
   description: string;
   ['x-kubernetes-group-version-kind']?: DefinitionGVK[];
   readOnly: boolean;
@@ -52,6 +53,7 @@ export interface ArrayDefinition extends DefinitionCommon {
 }
 
 export interface RefDefinition extends DefinitionCommon {
+  type: 'ref';
   $ref: string;
 }
 

@@ -5,7 +5,6 @@ import { TreeDataProvider, Node, ObjectNode } from './TreeDataProvider';
 import { FSProvider } from './FSProvider';
 import { objectUri } from './util';
 import { Definition } from './kube/interfaces';
-import { YAMLMap } from 'yaml/types';
 
 export function activate(context: vscode.ExtensionContext) {
 	let d = context.subscriptions.push.bind(context.subscriptions);
@@ -122,14 +121,14 @@ async function cleanObjectInActiveEditor() {
 }
 
 function cleanYamlRecursive(yaml: any, def: Definition) {
-	if ('$ref' in def) {
+	if (def.type === 'ref') {
 		def = kube.api.definitions[def.$ref];
 		if (!def) {
 			return;
 		}
 	}
 
-	if (!('properties' in def)) {
+	if (def.type !== 'object') {
 		return;
 	}
 
@@ -149,7 +148,11 @@ function cleanYamlRecursive(yaml: any, def: Definition) {
 			continue;
 		}
 
-		if (typeof v === 'object' && v) {
+		if (v instanceof Array && subdef.type === 'array') {
+			for (let item of v) {
+				cleanYamlRecursive(item, subdef.items);
+			}
+		} else if (typeof v === 'object' && v) {
 			cleanYamlRecursive(v, subdef);
 		}
 	}
