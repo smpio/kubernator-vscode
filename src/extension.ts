@@ -4,6 +4,7 @@ import { TreeDataProvider, Node, ObjectNode } from './TreeDataProvider';
 import { FSProvider } from './FSProvider';
 import { createObjectFromActiveEditor } from './commands/create';
 import { cleanObjectInActiveEditor } from './commands/clean';
+import { deleteObjectFromActiveEditor } from './commands/delete';
 
 export function activate(context: vscode.ExtensionContext) {
 	let d = context.subscriptions.push.bind(context.subscriptions);
@@ -37,11 +38,14 @@ export function activate(context: vscode.ExtensionContext) {
 		isCaseSensitive: true,
 	}));
 
-	// TODO: can be called without argument (using command palette)
-	d(vscode.commands.registerCommand('kubernator.delete', async (node: ObjectNode) => {
-		await fsProvider.delete(node.resourceUri, {recursive: false});
-		treeDataProvider.invalidate(node.parent);
-	}));
+	d(vscode.commands.registerCommand('kubernator.delete', handleCommandErrors(async (node?: ObjectNode) => {
+		if (node) {
+			await fsProvider.delete(node.resourceUri, {recursive: false});
+			treeDataProvider.invalidate(node.parent);
+		} else {
+			deleteObjectFromActiveEditor();
+		}
+	})));
 
 	d(vscode.commands.registerCommand('kubernator.create', handleCommandErrors(createObjectFromActiveEditor)));
 	d(vscode.commands.registerCommand('kubernator.clean', handleCommandErrors(cleanObjectInActiveEditor)));

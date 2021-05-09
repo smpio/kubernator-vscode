@@ -13,7 +13,8 @@
     "onFileSystem:kube",
     "onView:kubernator.treeView",
     "onCommand:kubernator.create",
-    "onCommand:kubernator.clean"
+    "onCommand:kubernator.clean",
+    "onCommand:kubernator.delete"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -49,13 +50,13 @@
       },
       {
         "command": "kubernator.create",
-        "title": "Create object from active editor",
+        "title": "Create",
         "icon": "$(save)",
         "category": "Kubernator"
       },
       {
         "command": "kubernator.clean",
-        "title": "Clean object in active editor",
+        "title": "Clean",
         "category": "Kubernator"
       }
     ],
@@ -67,6 +68,10 @@
         },
         {
           "command": "kubernator.clean",
+          "when": "editorLangId == yaml"
+        },
+        {
+          "command": "kubernator.delete",
           "when": "editorLangId == yaml"
         }
       ],
