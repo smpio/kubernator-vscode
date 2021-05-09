@@ -1,3 +1,5 @@
+delete current object
+refresh tree on save/delete
 discover only preferred
 search for TODO
 start kubectl proxy with extension (example: https://code.visualstudio.com/api/language-extensions/language-server-extension-guide)
