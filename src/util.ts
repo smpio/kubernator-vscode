@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as interfaces from './interfaces';
 import * as kube from './kube';
+import * as assert from 'assert';
 
 const CACHE_PROP = Symbol('ttlCache');
 
@@ -24,4 +25,13 @@ export function ttlCache(ttlMs: number) {
 
 export function objectUri(obj: kube.Object) {
   return vscode.Uri.parse(`${interfaces.DOCUMENT_SCHEME}:${obj.metadata.selfLink}.yaml`);
+}
+
+export function deepEqual(obj1: any, obj2: any) {
+  try {
+    assert.deepStrictEqual(obj1, obj2);
+    return true;
+  } catch (err) {
+    return false;
+  }
 }

@@ -3,7 +3,7 @@ import * as YAML from 'yaml';
 import * as kube from './kube';
 import { TreeDataProvider, Node, ObjectNode } from './TreeDataProvider';
 import { FSProvider } from './FSProvider';
-import { objectUri } from './util';
+import { deepEqual, objectUri } from './util';
 import { Definition } from './kube/interfaces';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -120,6 +120,8 @@ async function cleanObjectInActiveEditor() {
 	}
 }
 
+const DROP = Symbol('DROP');
+
 function cleanYamlRecursive(yaml: any, def: Definition) {
 	if (def.type === 'ref') {
 		def = kube.api.definitions[def.$ref];
@@ -130,6 +132,10 @@ function cleanYamlRecursive(yaml: any, def: Definition) {
 
 	if (def.type !== 'object') {
 		return;
+	}
+
+	if ('default' in def && deepEqual(yaml, def.default)) {
+		return DROP;
 	}
 
 	for (let [k, v] of Object.entries(yaml)) {
@@ -143,9 +149,17 @@ function cleanYamlRecursive(yaml: any, def: Definition) {
 			continue;
 		}
 
-		if ('default' in subdef && v === subdef.default) {
-			delete yaml[k];
-			continue;
+		if ('default' in subdef) {
+			if (typeof subdef.default === 'object') {
+				if (deepEqual(v, subdef.default)) {
+					delete yaml[k];
+					continue;
+				}
+			}
+			else if (v === subdef.default) {
+				delete yaml[k];
+				continue;
+			}
 		}
 
 		if (v instanceof Array && subdef.type === 'array') {
@@ -153,7 +167,9 @@ function cleanYamlRecursive(yaml: any, def: Definition) {
 				cleanYamlRecursive(item, subdef.items);
 			}
 		} else if (typeof v === 'object' && v) {
-			cleanYamlRecursive(v, subdef);
+			if (cleanYamlRecursive(v, subdef) === DROP) {
+				delete yaml[k];
+			}
 		}
 	}
 }

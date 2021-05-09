@@ -35,11 +35,11 @@ export interface DefinitionCommon {
   description: string;
   ['x-kubernetes-group-version-kind']?: DefinitionGVK[];
   readOnly: boolean;
+  default?: any;
 }
 
 export interface PrimitiveDefinition extends DefinitionCommon {
   type: 'string' | 'boolean' | 'integer' | 'number';
-  default?: any;
 }
 
 export interface ObjectDefinition extends DefinitionCommon {

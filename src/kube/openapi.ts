@@ -3,7 +3,7 @@ import {Definition} from './interfaces';
 
 export async function loadDefinitions(fetch: FetchFunction) {
   const RO_REGEX = /read[ -]only/i;
-  const DEFAULT_REGEX = /defaults?\s+to\s+['"]?([^"'\s\.]+)['"]?[\.\s]/i;
+  const DEFAULT_REGEX = /defaults?\s+(?:to|\w+\s+is)\s+['"`]?([^"'`\s\.\,]+)['"`]?[\,\.\s]/i;
   const TRUE_REGEX = /true|yes|1/i;
   const REF_PREFIX = '#/definitions/';
   let scheme = await fetch('openapi/v2');
@@ -46,6 +46,32 @@ export async function loadDefinitions(fetch: FetchFunction) {
   }
 
   cleanRecursive(scheme.definitions);
+
+  scheme.definitions['io.k8s.api.apps.v1.DeploymentStrategy'].default = {
+    type: 'RollingUpdate',
+    rollingUpdate: {
+      maxSurge: '25%',
+      maxUnavailable: '25%',
+    },
+  };
+  scheme.definitions['io.k8s.api.apps.v1.DaemonSetUpdateStrategy'].default = {
+    type: 'RollingUpdate',
+    rollingUpdate: {
+      maxUnavailable: 1,
+    },
+  };
+  scheme.definitions['io.k8s.api.apps.v1.StatefulSetUpdateStrategy'].default = {
+    type: 'RollingUpdate',
+    rollingUpdate: {
+      partition: 0,
+    },
+  };
+
+  scheme.definitions['io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta'].properties.finalizers.readOnly = true;
+  scheme.definitions['io.k8s.api.core.v1.PodSpec'].properties.schedulerName.default = 'default-scheduler';
+  scheme.definitions['io.k8s.api.core.v1.PodSecurityContext'].default = {};
+  scheme.definitions['io.k8s.api.core.v1.ResourceRequirements'].default = {};
+
   return scheme.definitions;
 }
 
