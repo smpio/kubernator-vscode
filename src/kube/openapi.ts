@@ -3,7 +3,7 @@ import {Definition} from './interfaces';
 
 export async function loadDefinitions(fetch: FetchFunction) {
   const RO_REGEX = /read[ -]only/i;
-  const DEFAULT_REGEX = /defaults?\s+to\s+['"]?(\w+)['"]?[\.\s]/i;
+  const DEFAULT_REGEX = /defaults?\s+to\s+['"]?([^"'\s\.]+)['"]?[\.\s]/i;
   const TRUE_REGEX = /true|yes|1/i;
   const REF_PREFIX = '#/definitions/';
   let scheme = await fetch('openapi/v2');
