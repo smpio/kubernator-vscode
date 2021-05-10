@@ -3,6 +3,10 @@
   "displayName": "Kubernator",
   "description": "Kubernetes object tree editor",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:smpio/kubernator-vscode.git"
+  },
   "publisher": "smpio",
   "engines": {
     "vscode": "^1.55.0"
