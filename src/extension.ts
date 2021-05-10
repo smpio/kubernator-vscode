@@ -28,6 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let treeView = vscode.window.createTreeView('kubernator.treeView', {
 		treeDataProvider: treeDataProvider,
+		showCollapseAll: true,
 	});
 
 	d(treeView);

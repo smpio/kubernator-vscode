@@ -1,3 +1,4 @@
+editor looses cursor position after saving existing object
 refresh tree on save/delete
 discover only preferred
 search for TODO
