@@ -1,6 +1,5 @@
 # TODO
 
-- editor looses cursor position after saving existing object
 - refresh tree on save/delete
 - fsprovider -> readDirectory (for topbar nav)
 - https://code.visualstudio.com/docs/getstarted/tips-and-tricks#_preventing-dirty-writes
@@ -21,3 +20,12 @@
 - start kubectl proxy with extension (example: https://code.visualstudio.com/api/language-extensions/language-server-extension-guide)
 - links https://github.com/Azure/vscode-kubernetes-tools/blob/master/src/kuberesources.linkprovider.ts
 - yaml schemas https://github.com/Azure/vscode-kubernetes-tools/tree/master/src/yaml-support
+
+
+## Can't be done
+
+Or workaround not found.
+
+- editor looses cursor position after saving existing object
+
+  Document is reloaded with changes from API server after save and this resets cursor.
