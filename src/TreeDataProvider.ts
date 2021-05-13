@@ -53,7 +53,7 @@ class NamespaceNode extends Node {
   constructor(ns?: kube.Object) {
     let label = ns ? ns.metadata.name : GLOBAL_PSEUDO_NAMESPACE;
     super(label, vscode.TreeItemCollapsibleState.Collapsed);
-    this.contextValue = 'namespace';
+    this.contextValue = 'folder namespace';
     this.ns = ns;
   }
 
@@ -98,7 +98,7 @@ class GroupNode extends Node {
     let label = gv.group.name === '' ? CORE_API_GROUP_NAME : gv.group.name;
 
     super(label, collapsibleState);
-    this.contextValue = 'group';
+    this.contextValue = 'folder group';
     this.gv = gv;
     this.ns = ns;
   }
@@ -131,7 +131,7 @@ class GroupNode extends Node {
 class ResourceNode extends Node {
   constructor(public resource: kube.Resource, public ns?: kube.Object) {
     super(resource.kind, vscode.TreeItemCollapsibleState.Collapsed);
-    this.contextValue = 'resource';
+    this.contextValue = 'folder resource';
   }
 
   @ttlCache(CACHE_TTL_MS)
@@ -154,7 +154,7 @@ export class ObjectNode extends Node {
 
   constructor(public obj: kube.Object, public parent: ResourceNode) {
     super(obj.metadata.name, vscode.TreeItemCollapsibleState.None);
-    this.contextValue = 'object';
+    this.contextValue = `leaf object:${obj.kind}`;
     this.resourceUri = objectUri(obj);
     this.command = {
       title: 'open',
@@ -172,7 +172,7 @@ class ErrorNode extends Node {
   constructor(public readonly err: Error) {
     super('Error: ' + err.message, vscode.TreeItemCollapsibleState.None);
     this.tooltip = err.message;
-    this.contextValue = 'error';
+    this.contextValue = 'leaf error';
     // this.iconPath = new vscode.ThemeIcon('error', new vscode.ThemeColor('errorForeground'));
   }
 

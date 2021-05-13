@@ -106,12 +106,12 @@
       "view/item/context": [
         {
           "command": "kubernator.refresh",
-          "when": "view == kubernator.treeView && viewItem != 'object' && viewItem != 'error'",
+          "when": "view == kubernator.treeView && viewItem =~ /\\bfolder\\b/",
           "group": "inline"
         },
         {
           "command": "kubernator.delete",
-          "when": "view == kubernator.treeView && viewItem == 'object'"
+          "when": "view == kubernator.treeView && viewItem =~ /\\bobject\\b/"
         }
       ]
     },

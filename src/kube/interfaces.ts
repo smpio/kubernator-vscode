@@ -21,6 +21,8 @@ export interface Resource {
 }
 
 export interface Object {
+  apiVersion: string,
+  kind: string,
   metadata: {
     name: string;
     selfLink: string;

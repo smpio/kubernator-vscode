@@ -59,6 +59,17 @@ export default class API {
   async list(resource: Resource, namespace?: string): Promise<Object[]> {
     let uri = this.getResourceUri(resource, namespace);
     let objectList = await this.fetch(uri).then(r => r.json());
+
+    // decorate
+    let apiVersion = resource.groupVersion.group.name + '/' + resource.groupVersion.version;
+    if (apiVersion[0] === '/') {
+      apiVersion = resource.groupVersion.version;
+    }
+    for (let obj of objectList.items) {
+      obj.apiVersion = apiVersion;
+      obj.kind = resource.kind;
+    }
+
     return objectList.items;
   }
 
