@@ -35,3 +35,19 @@ export function deepEqual(obj1: any, obj2: any) {
     return false;
   }
 }
+
+export function closeActiveEditor() {
+  let editor = vscode.window.activeTextEditor;
+	if (!editor) {
+		return;
+	}
+
+	if (editor.document.isUntitled) {
+		let all = new vscode.Range(new vscode.Position(0, 0), new vscode.Position(editor.document.lineCount, 0));
+		editor.edit(editBuilder => {
+			editBuilder.replace(all, '');
+		});
+	}
+
+	vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+}

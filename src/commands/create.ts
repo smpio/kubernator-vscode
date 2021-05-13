@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as YAML from 'yaml';
 import * as kube from '../kube';
-import { objectUri } from '../util';
+import { objectUri, closeActiveEditor } from '../util';
 
 export async function createObjectFromActiveEditor() {
 	let editor = vscode.window.activeTextEditor;
@@ -26,6 +26,7 @@ export async function createObjectFromActiveEditor() {
 
 	obj = await kube.api.post(postUri, text, 'application/yaml').then(r => r.json());
 
+	closeActiveEditor();
 	vscode.commands.executeCommand('vscode.open', objectUri(obj));
 	// vscode.window.showTextDocument(objectUri(obj), { preview: false });
 }
