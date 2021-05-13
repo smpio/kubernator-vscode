@@ -1,19 +1,25 @@
 {
-  "name": "kubernator",
+  "name": "kubernator-vscode",
   "displayName": "Kubernator",
   "description": "Kubernetes object tree editor",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "git@github.com:smpio/kubernator-vscode.git"
+    "url": "https://github.com/smpio/kubernator-vscode.git"
   },
   "publisher": "smpio",
   "engines": {
     "vscode": "^1.55.0"
   },
+  "license": "SEE LICENSE IN LICENSE",
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "kubernetes"
+  ],
+  "preview": true,
+  "icon": "assets/kubernetes256.png",
   "activationEvents": [
     "onFileSystem:kube",
     "onView:kubernator.treeView",
@@ -130,8 +136,8 @@
     ]
   },
   "scripts": {
-    "vscode:package": "npx vsce package",
     "vscode:prepublish": "npm run compile",
+    "package": "npx vsce package",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
