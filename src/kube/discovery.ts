@@ -13,9 +13,6 @@ const coreRawGroup = {
   preferredVersion: coreRawGV,
 };
 
-// TODO: convert to class
-// TODO: simplify as in python (index by strings)
-
 export async function discoverAllGroups(fetch: FetchFunction): Promise<{[groupName: string]: Group}> {
   let rawGroupList = await fetch('apis');
   rawGroupList.groups.push(coreRawGroup);
@@ -56,8 +53,8 @@ async function discoverGroup(rawGroup: any, fetch: FetchFunction): Promise<Group
 }
 
 function parseResourceList(rawResourceList: any): Resource[] {
-  // TODO: add subresources
-  return rawResourceList.resources.filter((resource: any) => resource.name.indexOf('/') === -1);
+  const isNotSubresource = (resource: any) => resource.name.indexOf('/') === -1;
+  return rawResourceList.resources.filter(isNotSubresource);
 }
 
 function mapByKind(resources: Resource[]): {[kind: string]: Resource} {
