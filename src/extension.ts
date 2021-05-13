@@ -55,6 +55,16 @@ export function activate(context: vscode.ExtensionContext) {
 
 	d(vscode.commands.registerCommand('kubernator.create', handleCommandErrors(createObjectFromActiveEditor)));
 	d(vscode.commands.registerCommand('kubernator.clean', handleCommandErrors(cleanObjectInActiveEditor)));
+
+	d(vscode.commands.registerCommand('kubernator.goto_pv', handleCommandErrors(async (node: ObjectNode) => {
+		let obj = node.obj as any;
+		let pvName = obj.spec.volumeName;
+		if (!pvName) {
+			throw new Error('volumeName not set');
+		}
+
+		// TODO: reveal
+	})));
 }
 
 export function deactivate() {

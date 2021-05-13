@@ -75,6 +75,11 @@
         "command": "kubernator.reconfigure",
         "title": "Reconfigure",
         "category": "Kubernator"
+      },
+      {
+        "command": "kubernator.goto_pv",
+        "title": "Go to PV",
+        "category": "Kubernator"
       }
     ],
     "menus": {
@@ -94,6 +99,10 @@
         {
           "command": "kubernator.refresh",
           "when": "false"
+        },
+        {
+          "command": "kubernator.goto_pv",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -112,6 +121,10 @@
         {
           "command": "kubernator.delete",
           "when": "view == kubernator.treeView && viewItem =~ /\\bobject\\b/"
+        },
+        {
+          "command": "kubernator.goto_pv",
+          "when": "view == kubernator.treeView && viewItem =~ /\\bobject:PersistentVolumeClaim\\b/"
         }
       ]
     },
