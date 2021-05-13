@@ -1,38 +1,65 @@
 # Kubernator
 
-Kubernetes object tree editor.
+Kubernetes object tree viewer and manifest editor. Lightweight and fast, compared to similar extensions on the marketplace.
+
+![Screenshot](assets/screenshot.png)
+
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+* view your cluster objects objects grouped by namespace in your cluster, including Custom Resources
+* edit object manifests and apply them to your cluster
+* create, delete objects
+* clean object manifest, deleting read-only fields and fields with defaults
+* RBAC friendly
 
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+Extension requires running
 
-## Extension Settings
+```
+kubectl proxy
+```
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+in background to make requests to the Kubernetes API.
 
-For example:
+I've decided to use proxy to not implement and maintain multitude Kubernetes authentication methods and keep this extension lightweight.
+
+In future versions, extension may start the proxy itself.
+
+
+## Example usage
+
+### Edit object
+
+1. Select some object in tree view, e.g. some Deployment. A manifest editor will open.
+2. Make some changes to the manifest.
+3. Save the manifest as always. The changes will apply to your cluster.
+
+### Clone and edit object
+
+1. Select some object in tree view, e.g. some Deployment. A manifest editor will open.
+2. Run command `Kubernator: Clean` in command palette. A new tab with cleaned manifest will open.
+3. Make some changes to the manifest.
+4. Run command `Kubernator: Create` in command palette. New object will be created in your cluster and a new tab with this object will open.
+
+
+## Commands
+
+Important commands:
+
+* `Kubernator: Create`: analogue of `kubectl -f manifest.yaml` for active editor
+* `Kubernator: Clean`: clean manifest in active editor, deleting read-only fields and fields with defaults
+* `Kubernator: Delete`: delete object in active editor
+* `Kubernator: Reconfigure`: reload API resources and manifest schema (executed on startup, maybe required after CRD installation or cluster upgrade)
+
+
+## Settings
 
 This extension contributes the following settings:
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-### 0.0.1
-
-Initial alpha version.
+* `kubernator.apiURL`: URL of API proxy (default `http://localhost:8001`)
+* `kubernator.excludeEmpty`: don't show empty "folders" in tree viewlet
+* `kubernator.expandCoreGroup`: automatically expand `[core]` "folder"
+* `kubernator.expandUndottedGroups`: automatically expand "folders" without dots in their name

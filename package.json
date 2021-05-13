@@ -90,6 +90,10 @@
         {
           "command": "kubernator.delete",
           "when": "editorLangId == yaml"
+        },
+        {
+          "command": "kubernator.refresh",
+          "when": "false"
         }
       ],
       "view/title": [
