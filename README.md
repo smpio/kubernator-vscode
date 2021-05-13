@@ -57,9 +57,4 @@ Important commands:
 
 ## Settings
 
-This extension contributes the following settings:
-
-* `kubernator.apiURL`: URL of API proxy (default `http://localhost:8001`)
-* `kubernator.excludeEmpty`: don't show empty "folders" in tree viewlet
-* `kubernator.expandCoreGroup`: automatically expand `[core]` "folder"
-* `kubernator.expandUndottedGroups`: automatically expand "folders" without dots in their name
+See **Feature Contributions** extension page.

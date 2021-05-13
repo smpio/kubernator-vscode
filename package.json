@@ -121,19 +121,23 @@
         "properties": {
           "kubernator.apiURL": {
             "type": "string",
-            "default": "http://localhost:8001"
+            "default": "http://localhost:8001",
+            "description": "URL of API proxy"
           },
           "kubernator.excludeEmpty": {
             "type": "boolean",
-            "default": true
+            "default": true,
+            "description": "don't show empty \"folders\" in tree viewlet"
           },
           "kubernator.expandCoreGroup": {
             "type": "boolean",
-            "default": true
+            "default": true,
+            "description": "automatically expand `[core]` \"folder\""
           },
           "kubernator.expandUndottedGroups": {
             "type": "boolean",
-            "default": true
+            "default": true,
+            "description": "automatically expand \"folders\" without dots in their name"
           }
         }
       }
