@@ -9,18 +9,23 @@ import { deleteObjectFromActiveEditor } from './commands/delete';
 export function activate(context: vscode.ExtensionContext) {
 	let d = context.subscriptions.push.bind(context.subscriptions);
 
-	let config = vscode.workspace.getConfiguration('kubernator');
-	kube.api.configure(config.apiURL);
-
 	let treeDataProvider = new TreeDataProvider();
+
+	function reconfigure() {
+		let config = vscode.workspace.getConfiguration('kubernator');
+		kube.api.configure(config.apiURL);
+		treeDataProvider.invalidate();
+	}
+
+	reconfigure();
 
 	d(vscode.workspace.onDidChangeConfiguration(e => {
 		if (e.affectsConfiguration('kubernator')) {
-			config = vscode.workspace.getConfiguration('kubernator');
-			kube.api.configure(config.apiURL);
-			treeDataProvider.invalidate();
+			reconfigure();
 		}
 	}));
+
+	d(vscode.commands.registerCommand('kubernator.reconfigure', reconfigure));
 
 	d(vscode.commands.registerCommand('kubernator.refresh', (node?: Node) => {
 		treeDataProvider.invalidate(node);

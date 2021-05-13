@@ -19,7 +19,8 @@
     "onView:kubernator.treeView",
     "onCommand:kubernator.create",
     "onCommand:kubernator.clean",
-    "onCommand:kubernator.delete"
+    "onCommand:kubernator.delete",
+    "onCommand:kubernator.reconfigure"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -62,6 +63,11 @@
       {
         "command": "kubernator.clean",
         "title": "Clean",
+        "category": "Kubernator"
+      },
+      {
+        "command": "kubernator.reconfigure",
+        "title": "Reconfigure",
         "category": "Kubernator"
       }
     ],

@@ -10,7 +10,6 @@ reveal
 PVC -> right click -> Go to PV
 status icons near deployments, ds, etc
 metadata.selfLink is deprecated
-add reset command (reload discovery, schema)
 open ns obj on click on namespace
 load resources using api group with only preferredVersion, load non-preferred when needed only
 special view: some objects can have special view (simple describe, or complex graphs)

@@ -19,6 +19,7 @@ export default class API {
   configure(apiURL: string): Promise<void> {
     this.apiURL = apiURL;
     this.groups = {};
+    this.definitions = {};
 
     return this.ready = (async () => {
       let fetch = (uri: string) => this.fetch(uri).then(r => r.json());
