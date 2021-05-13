@@ -142,6 +142,7 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "package": "npx vsce package",
+    "publish": "npx vsce publish",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
