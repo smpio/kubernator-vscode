@@ -9,6 +9,7 @@ const EXT_MIMETYPE_MAP: {[ext: string]: string} = {
   '.json': 'application/json',
 };
 
+// TODO: add fetch cache for sequence "stat, read"
 export class FSProvider implements vscode.FileSystemProvider {
 	static scheme = interfaces.DOCUMENT_SCHEME;
 

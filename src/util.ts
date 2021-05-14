@@ -25,7 +25,7 @@ export function ttlCache(ttlMs: number) {
 
 export function objectUri(obj: kube.Object) {
   let path = kube.api.getObjectUri(obj);
-  return vscode.Uri.parse(`${interfaces.DOCUMENT_SCHEME}:${path}.yaml`);
+  return vscode.Uri.parse(`${interfaces.DOCUMENT_SCHEME}:/${path}.yaml`);
 }
 
 export function deepEqual(obj1: any, obj2: any) {

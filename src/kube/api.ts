@@ -88,9 +88,9 @@ export default class API {
   getResourceUri(resource: Resource, namespace?: string): string {
     let uri;
     if (resource.groupVersion.group.name === '') {
-      uri = '/api';
+      uri = 'api';
     } else {
-      uri = '/apis/' + resource.groupVersion.group.name;
+      uri = 'apis/' + resource.groupVersion.group.name;
     }
     uri += '/' + resource.groupVersion.version;
     if (resource.namespaced) {
