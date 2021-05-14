@@ -1,4 +1,5 @@
 import * as nodePath from 'path';
+import * as YAML from 'yaml';
 import * as vscode from 'vscode';
 import * as kube from './kube';
 import * as interfaces from './interfaces';
@@ -66,6 +67,17 @@ export class FSProvider implements vscode.FileSystemProvider {
   async readFile(uri: vscode.Uri): Promise<Uint8Array> {
     await kube.api.ready;
     let {path, mimetype} = explodeUri(uri);
+
+    if (mimetype === 'application/yaml') {
+      let obj = await kube.api.fetch(path).then(r => r.json());
+
+      let text = YAML.stringify(obj, {
+        indentSeq: false,
+      });
+
+      return Buffer.from(text);
+    }
+
     return kube.api.fetch(path, mimetype).then(r => r.buffer());
   }
 
