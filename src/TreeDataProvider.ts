@@ -234,5 +234,5 @@ const nodeID = {
   namespace: (ns?: string) => ns ?? 'GLOBAL',
   group: (gv: kube.GroupVersion, ns?: string) => nodeID.namespace(ns) + ':' + gv.group.name,
   resource: (resource: kube.Resource, ns?: string) => nodeID.group(resource.groupVersion, ns) + ':' + resource.kind,
-  object: (obj: kube.Object) => nodeID.resource(kube.api.getResource(obj)) + ':' + obj.metadata.name,
+  object: (obj: kube.Object) => nodeID.resource(kube.api.getResource(obj), obj.metadata.namespace) + ':' + obj.metadata.name,
 };
