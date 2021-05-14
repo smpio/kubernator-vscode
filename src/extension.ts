@@ -38,24 +38,24 @@ export function activate(context: vscode.ExtensionContext) {
 
 	d(treeView);
 
-	// FIXME: dirty hack
-	// This hack has roots from another hack, that invalidates subtree on expand.
-	// Revealing and invalidating subtree simulateneusly results in race condition in vscode.
-	// We need to disable caching in another way, or implement watching.
-	let revealing = false;
-	async function reveal(node: Node) {
-		revealing = true;
-		try {
-			return await treeView.reveal(node);
-		} finally {
-			revealing = false;
-		}
-	}
-	// HACK: invalidate subtree cache on expand
-	// handling onDidCollapseElement doesn't work because it calls getChildren right after handling
+	// Workaround for TreeView content caching
+	// By default, once tree view item has been expanded, its children are saved in cache that is not cleared
+	// after collapsing the item.
+	// Another approach would be calling invalidate immediately after expand, but this will lead to
+	// race conditions. See 06f58be for details.
+	let expandedElements = new Set<string>();
 	treeView.onDidExpandElement(e => {
-		if (!revealing) {
-			treeDataProvider.invalidate(e.element);
+		let element = e.element;
+		if (!element.id) {
+			return;
+		}
+
+		if (expandedElements.has(element.id)) {
+			setTimeout(() => {
+				treeDataProvider.invalidate(element);
+			}, 1000);
+		} else {
+			expandedElements.add(element.id);
 		}
 	});
 
@@ -83,7 +83,7 @@ export function activate(context: vscode.ExtensionContext) {
 			throw new Error('volumeName not set');
 		}
 
-		reveal(new ObjectNode({
+		treeView.reveal(new ObjectNode({
 			apiVersion: 'v1',
 			kind: 'PersistentVolume',
 			metadata: {
