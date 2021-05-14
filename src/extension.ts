@@ -97,6 +97,58 @@ export function activate(context: vscode.ExtensionContext) {
 
 	d(vscode.commands.registerCommand('kubernator.edit', handleCommandErrors(
 		(node: ObjectNode) => vscode.commands.executeCommand('vscode.open', node.resourceUri))));
+
+	d(vscode.commands.registerCommand('kubernator.shell', handleCommandErrors((node: ObjectNode) => {
+		let shellsToTry = ['sh'];
+		let pod = node.obj as any;
+
+		if (pod.spec?.containers?.length > 1) {
+			let selected: string|undefined = undefined;
+
+			const quickPick = vscode.window.createQuickPick();
+			quickPick.items = pod.spec.containers.map((c: any) => ({
+				label: c.name,
+			}));
+			quickPick.onDidChangeSelection(selection => {
+				selected = selection[0].label;
+			});
+			quickPick.onDidAccept(() => {
+				runExec(shellsToTry, selected);
+			});
+			quickPick.onDidHide(() => quickPick.dispose());
+			quickPick.show();
+		} else {
+			runExec(shellsToTry);
+		}
+
+		function runExec(shells: string[], container?: string) {
+			const terminal = vscode.window.createTerminal(pod.metadata.name);
+			d(terminal);
+
+			let shell = shells[0];
+
+			let containerOpts = '';
+			if (container) {
+				containerOpts = '-c ' + container;
+			}
+
+			terminal.sendText(`exec kubectl -n ${pod.metadata.namespace} exec -it ${pod.metadata.name} ${containerOpts} -- ${shell}`);
+			terminal.show();
+
+			if (shells.length > 1) {
+				let closeHandler = vscode.window.onDidCloseTerminal(t => {
+					if (t !== terminal) {
+						return;
+					}
+
+					if (t.exitStatus?.code === 126) {
+						runExec(shells.slice(1));
+					}
+					closeHandler.dispose();
+				});
+			}
+		}
+	})));
 }
 
 export function deactivate() {

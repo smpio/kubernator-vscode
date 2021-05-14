@@ -90,6 +90,11 @@
         "command": "kubernator.edit",
         "title": "Edit",
         "category": "Kubernator"
+      },
+      {
+        "command": "kubernator.shell",
+        "title": "Shell",
+        "category": "Kubernator"
       }
     ],
     "menus": {
@@ -121,6 +126,10 @@
         {
           "command": "kubernator.edit",
           "when": "false"
+        },
+        {
+          "command": "kubernator.shell",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -147,6 +156,10 @@
         {
           "command": "kubernator.edit",
           "when": "view == kubernator.treeView && viewItem =~ /\\bobject\\b|\\bnamespace\\b/"
+        },
+        {
+          "command": "kubernator.shell",
+          "when": "view == kubernator.treeView && viewItem =~ /\\bobject:Pod\\b/"
         }
       ]
     },
