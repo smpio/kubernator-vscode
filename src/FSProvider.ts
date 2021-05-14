@@ -39,11 +39,7 @@ export class FSProvider implements vscode.FileSystemProvider {
 
     await kube.api.ready;
 
-    let path = uri.path;
-    if (path.endsWith('.yaml')) {
-      path = path.slice(0, -5);
-    }
-
+    let {path} = explodeUri(uri);
     let obj = await kube.api.fetch(path).then(r => r.json());
 
     let ctimeIso = obj.metadata?.creationTimestamp;
