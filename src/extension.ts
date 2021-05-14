@@ -94,6 +94,9 @@ export function activate(context: vscode.ExtensionContext) {
 	})));
 
 	d(vscode.commands.registerCommand('kubernator.reveal', handleCommandErrors(() => revealObjectInActiveEditor(treeView))));
+
+	d(vscode.commands.registerCommand('kubernator.edit', handleCommandErrors(
+		(node: ObjectNode) => vscode.commands.executeCommand('vscode.open', node.resourceUri))));
 }
 
 export function deactivate() {

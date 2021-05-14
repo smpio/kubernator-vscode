@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - PVC -> right click -> Go to PV
 - reveal
+- namespace -> right click -> edit
 ### Fixed
 - metadata.selfLink is deprecated
 

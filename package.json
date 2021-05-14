@@ -85,6 +85,11 @@
         "command": "kubernator.reveal",
         "title": "Reveal",
         "category": "Kubernator"
+      },
+      {
+        "command": "kubernator.edit",
+        "title": "Edit",
+        "category": "Kubernator"
       }
     ],
     "menus": {
@@ -112,6 +117,10 @@
         {
           "command": "kubernator.goto_pv",
           "when": "false"
+        },
+        {
+          "command": "kubernator.edit",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -134,6 +143,10 @@
         {
           "command": "kubernator.goto_pv",
           "when": "view == kubernator.treeView && viewItem =~ /\\bobject:PersistentVolumeClaim\\b/"
+        },
+        {
+          "command": "kubernator.edit",
+          "when": "view == kubernator.treeView && viewItem =~ /\\bobject\\b|\\bnamespace\\b/"
         }
       ]
     },
