@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as kube from './kube';
+import { startProxy, Proxy } from './kube/proxy';
 import { TreeDataProvider, Node, ObjectNode } from './TreeDataProvider';
 import { FSProvider } from './FSProvider';
 import { createObjectFromActiveEditor } from './commands/create';
@@ -7,18 +8,29 @@ import { cleanObjectInActiveEditor } from './commands/clean';
 import { deleteObjectFromActiveEditor } from './commands/delete';
 import { revealObjectInActiveEditor } from './commands/reveal';
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 	let d = context.subscriptions.push.bind(context.subscriptions);
+	let proxy: Proxy|null = null;
 
 	let treeDataProvider = new TreeDataProvider();
 
-	function reconfigure() {
+	async function reconfigure() {
 		let config = vscode.workspace.getConfiguration('kubernator');
-		kube.api.configure(config.apiURL);
+
+		if (config.apiURL) {
+			kube.api.configure({apiURL: config.apiURL});
+		} else {
+			if (!proxy) {
+				proxy = await startProxy();
+				d(proxy);
+			}
+			kube.api.configure({socketPath: proxy.socketPath});
+		}
+
 		treeDataProvider.invalidate();
 	}
 
-	reconfigure();
+	await reconfigure();
 
 	d(vscode.workspace.onDidChangeConfiguration(e => {
 		if (e.affectsConfiguration('kubernator')) {

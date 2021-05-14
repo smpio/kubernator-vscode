@@ -169,8 +169,8 @@
         "properties": {
           "kubernator.apiURL": {
             "type": "string",
-            "default": "http://localhost:8001",
-            "description": "URL of API proxy"
+            "default": "",
+            "description": "Base URL of Kubernetes API (will run kubectl proxy if not set)"
           },
           "kubernator.excludeEmpty": {
             "type": "boolean",

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - reveal
 - namespace -> right click -> edit
 - right click on pod -> kubectl exec, kubectl debug
+- start kubectl proxy with extension
 ### Fixed
 - metadata.selfLink is deprecated
 

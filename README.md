@@ -16,17 +16,7 @@ Kubernetes object tree viewer and manifest editor. Lightweight and fast, compare
 
 ## Requirements
 
-Extension requires running
-
-```
-kubectl proxy
-```
-
-in background to make requests to the Kubernetes API.
-
-I've decided to use proxy to not implement and maintain multitude Kubernetes authentication methods and keep this extension lightweight.
-
-In future versions, extension may start the proxy itself.
+`kubectl` should be in the PATH and authorized.
 
 
 ## Example usage

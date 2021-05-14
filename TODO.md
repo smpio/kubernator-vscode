@@ -12,7 +12,6 @@
 - tree quick search
 - limit concurrent requests to API - why?
 - shadow non-interesting fields, make this configurable (maybe shadow defaults)
-- start kubectl proxy with extension (example: https://code.visualstudio.com/api/language-extensions/language-server-extension-guide)
 - links https://github.com/Azure/vscode-kubernetes-tools/blob/master/src/kuberesources.linkprovider.ts
 - yaml schemas https://github.com/Azure/vscode-kubernetes-tools/tree/master/src/yaml-support
 

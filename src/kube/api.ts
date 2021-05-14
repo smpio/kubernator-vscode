@@ -1,25 +1,32 @@
 import fetch, { Response, BodyInit } from 'node-fetch';
 import { URL } from 'url';
+import { Agent, AgentOptions } from 'http';
 import * as discovery from './discovery';
 import * as openapi from './openapi';
 import { Group, Resource, Object, Definition } from './interfaces';
 
 export default class API {
+  agent?: Agent;
   apiURL?: string;
   ready: Promise<void> = new Promise(() => {});
   groups: {[groupName: string]: Group} = {};
   definitions: {[id: string]: Definition} = {};
 
-  constructor(apiURL?: string) {
-    if (apiURL) {
-      this.configure(apiURL);
-    }
-  }
-
-  configure(apiURL: string): Promise<void> {
-    this.apiURL = apiURL;
+  configure(options: {apiURL?: string, socketPath?: string}): Promise<void> {
     this.groups = {};
     this.definitions = {};
+
+    if (options.apiURL) {
+      this.apiURL = options.apiURL;
+      this.agent = undefined;
+    } else if (options.socketPath) {
+      this.apiURL = 'http://localhost';
+      this.agent = new Agent({
+        socketPath: options.socketPath,
+      } as AgentOptions);
+    } else {
+      throw Error('Either apiURL or socketPath should be set');
+    }
 
     return this.ready = (async () => {
       let fetch = (uri: string) => this.fetch(uri).then(r => r.json());
@@ -168,6 +175,7 @@ export default class API {
       method: method,
       body: options.body,
       headers: headers,
+      agent: this.agent,
     });
 
     if (!response.ok) {
