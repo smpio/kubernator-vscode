@@ -66,6 +66,21 @@ class NamespaceNode extends Node {
     this.contextValue = 'folder namespace';
     this.ns = ns;
     this.id = nodeID.namespace(ns);
+
+    if (this.ns) {
+      this.resourceUri = objectUri({
+        apiVersion: 'v1',
+        kind: 'Namespace',
+        metadata: {
+          name: this.ns,
+        },
+      });
+      this.command = {
+        title: 'open',
+        command: 'vscode.open',
+        arguments: [this.resourceUri],
+      };
+    }
   }
 
   @ttlCache(CACHE_TTL_MS)
