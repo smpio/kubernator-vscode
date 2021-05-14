@@ -75,11 +75,6 @@ class NamespaceNode extends Node {
           name: this.ns,
         },
       });
-      this.command = {
-        title: 'open',
-        command: 'vscode.open',
-        arguments: [this.resourceUri],
-      };
     }
   }
 
