@@ -37,7 +37,27 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	d(treeView);
-	treeView.onDidExpandElement(e => treeDataProvider.invalidate(e.element)); // invalidate subtree cache on expand
+
+	// FIXME: dirty hack
+	// This hack has roots from another hack, that invalidates subtree on expand.
+	// Revealing and invalidating subtree simulateneusly results in race condition in vscode.
+	// We need to disable caching in another way, or implement watching.
+	let revealing = false;
+	async function reveal(node: Node) {
+		revealing = true;
+		try {
+			return await treeView.reveal(node);
+		} finally {
+			revealing = false;
+		}
+	}
+	// HACK: invalidate subtree cache on expand
+	// handling onDidCollapseElement doesn't work because it calls getChildren right after handling
+	treeView.onDidExpandElement(e => {
+		if (!revealing) {
+			treeDataProvider.invalidate(e.element);
+		}
+	});
 
 	let fsProvider = new FSProvider();
 	d(vscode.workspace.registerFileSystemProvider(FSProvider.scheme, fsProvider, {
@@ -63,7 +83,7 @@ export function activate(context: vscode.ExtensionContext) {
 			throw new Error('volumeName not set');
 		}
 
-		treeView.reveal(new ObjectNode({
+		reveal(new ObjectNode({
 			apiVersion: 'v1',
 			kind: 'PersistentVolume',
 			metadata: {
