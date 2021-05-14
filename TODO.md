@@ -5,7 +5,6 @@
 - https://code.visualstudio.com/docs/getstarted/tips-and-tricks#_preventing-dirty-writes
 - compare with saved (compare dirty)
 - discover only preferred
-- reveal
 - status icons near deployments, ds, etc
 - metadata.selfLink is deprecated
 - open ns obj on click on namespace

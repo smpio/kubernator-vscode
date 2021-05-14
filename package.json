@@ -80,6 +80,11 @@
         "command": "kubernator.goto_pv",
         "title": "Go to PV",
         "category": "Kubernator"
+      },
+      {
+        "command": "kubernator.reveal",
+        "title": "Reveal",
+        "category": "Kubernator"
       }
     ],
     "menus": {
@@ -94,6 +99,10 @@
         },
         {
           "command": "kubernator.delete",
+          "when": "editorLangId == yaml"
+        },
+        {
+          "command": "kubernator.reveal",
           "when": "editorLangId == yaml"
         },
         {

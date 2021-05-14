@@ -5,6 +5,7 @@ import { FSProvider } from './FSProvider';
 import { createObjectFromActiveEditor } from './commands/create';
 import { cleanObjectInActiveEditor } from './commands/clean';
 import { deleteObjectFromActiveEditor } from './commands/delete';
+import { revealObjectInActiveEditor } from './commands/reveal';
 
 export function activate(context: vscode.ExtensionContext) {
 	let d = context.subscriptions.push.bind(context.subscriptions);
@@ -92,6 +93,8 @@ export function activate(context: vscode.ExtensionContext) {
 			},
 		}));
 	})));
+
+	d(vscode.commands.registerCommand('kubernator.reveal', handleCommandErrors(() => revealObjectInActiveEditor(treeView))));
 }
 
 export function deactivate() {
