@@ -47,7 +47,7 @@ export function activate(context: vscode.ExtensionContext) {
 	d(vscode.commands.registerCommand('kubernator.delete', handleCommandErrors(async (node?: ObjectNode) => {
 		if (node) {
 			await fsProvider.delete(node.resourceUri, {recursive: false});
-			treeDataProvider.invalidate(node.parent);
+			treeDataProvider.invalidate(node.getParent());
 		} else {
 			deleteObjectFromActiveEditor();
 		}
@@ -63,7 +63,14 @@ export function activate(context: vscode.ExtensionContext) {
 			throw new Error('volumeName not set');
 		}
 
-		// TODO: reveal
+		treeView.reveal(new ObjectNode({
+			apiVersion: 'v1',
+			kind: 'PersistentVolume',
+			metadata: {
+				name: pvName,
+				selfLink: '/api/v1/persistentvolumes/' + pvName,  // TODO: remove
+			},
+		}));
 	})));
 }
 

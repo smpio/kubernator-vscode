@@ -88,7 +88,20 @@ export default class API {
     return uri;
   }
 
-  getResource(groupVersion: string, kind: string): Resource {
+  getResource(obj: Object): Resource;
+  getResource(groupVersion: string, kind: string): Resource;
+  getResource(a: any, b?: any): Resource {
+    let groupVersion, kind;
+
+    if (typeof a !== 'string') {
+      let obj = a as Object;
+      groupVersion = obj.apiVersion;
+      kind = obj.kind;
+    } else {
+      groupVersion = a;
+      kind = b;
+    }
+
     let groupName, version;
     let separatorPos = groupVersion.indexOf('/');
 
