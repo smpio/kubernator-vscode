@@ -1,6 +1,5 @@
 # TODO
 
-- [strip managedFields](https://github.com/kubernetes/kubernetes/pull/96878)
 - refresh tree on save/delete
 - fsprovider -> readDirectory (for topbar nav)
 - https://code.visualstudio.com/docs/getstarted/tips-and-tricks#_preventing-dirty-writes

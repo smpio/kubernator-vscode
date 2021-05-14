@@ -69,7 +69,12 @@ export class FSProvider implements vscode.FileSystemProvider {
     let {path, mimetype} = explodeUri(uri);
 
     if (mimetype === 'application/yaml') {
+      let config = vscode.workspace.getConfiguration('kubernator');
       let obj = await kube.api.fetch(path).then(r => r.json());
+
+      if (!config.showManagedFields && obj.metadata) {
+        delete obj.metadata.managedFields;
+      }
 
       let text = YAML.stringify(obj, {
         indentSeq: false,

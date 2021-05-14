@@ -151,6 +151,11 @@
             "type": "boolean",
             "default": true,
             "description": "automatically expand \"folders\" without dots in their name"
+          },
+          "kubernator.showManagedFields": {
+            "type": "boolean",
+            "default": false,
+            "description": "disable stripping of object.metadata.managedFields"
           }
         }
       }
