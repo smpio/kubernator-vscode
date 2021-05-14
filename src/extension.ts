@@ -110,25 +110,18 @@ export async function activate(context: vscode.ExtensionContext) {
 	d(vscode.commands.registerCommand('kubernator.edit', handleCommandErrors(
 		(node: ObjectNode) => vscode.commands.executeCommand('vscode.open', node.resourceUri))));
 
-	d(vscode.commands.registerCommand('kubernator.shell', handleCommandErrors((node: ObjectNode) => {
+	d(vscode.commands.registerCommand('kubernator.shell', handleCommandErrors(async (node: ObjectNode) => {
 		let shellsToTry = ['sh'];
 		let pod = node.obj as any;
 
 		if (pod.spec?.containers?.length > 1) {
-			let selected: string|undefined = undefined;
+			let selected = await vscode.window.showQuickPick(pod.spec.containers.map((c: any) => c.name));
 
-			const quickPick = vscode.window.createQuickPick();
-			quickPick.items = pod.spec.containers.map((c: any) => ({
-				label: c.name,
-			}));
-			quickPick.onDidChangeSelection(selection => {
-				selected = selection[0].label;
-			});
-			quickPick.onDidAccept(() => {
-				runExec(shellsToTry, selected);
-			});
-			quickPick.onDidHide(() => quickPick.dispose());
-			quickPick.show();
+			if (!selected) {
+				return;
+			}
+
+			runExec(shellsToTry, selected);
 		} else {
 			runExec(shellsToTry);
 		}
