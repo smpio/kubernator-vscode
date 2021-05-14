@@ -1,8 +1,9 @@
+import * as nodePath from 'path';
 import * as vscode from 'vscode';
 import * as kube from './kube';
 import * as interfaces from './interfaces';
 
-const EXT_MIMETYPE_MAP = {
+const EXT_MIMETYPE_MAP: {[ext: string]: string} = {
   '.yaml': 'application/yaml',
   '.json': 'application/json',
 };
@@ -97,15 +98,13 @@ export class FSProvider implements vscode.FileSystemProvider {
 
 function explodeUri(uri: vscode.Uri): {path: string, mimetype?: string} {
   let path = uri.path;
-  let mimetype = undefined;
+  let ext = nodePath.extname(path);
+  let mimetype = EXT_MIMETYPE_MAP[ext];
 
-  for (let [ext, mtype] of Object.entries(EXT_MIMETYPE_MAP)) {
-    if (path.endsWith(ext)) {
-      path = path.slice(0, -ext.length);
-      mimetype = mtype;
-      break;
-    }
+  if (mimetype === undefined) {
+    throw Error(`Unknown extension "${ext}"`);
   }
 
+  path = path.slice(0, -ext.length);
   return {path, mimetype};
 }
