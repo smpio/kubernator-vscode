@@ -73,12 +73,17 @@ export default class API {
     return objectList.items;
   }
 
+  getObjectUri(obj: Object): string {
+    let resource = this.getResource(obj);
+    return this.getResourceUri(resource, obj.metadata.namespace) + '/' + obj.metadata.name;
+  }
+
   getResourceUri(resource: Resource, namespace?: string): string {
-    let uri = '';
+    let uri;
     if (resource.groupVersion.group.name === '') {
-      uri = 'api';
+      uri = '/api';
     } else {
-      uri = 'apis/' + resource.groupVersion.group.name;
+      uri = '/apis/' + resource.groupVersion.group.name;
     }
     uri += '/' + resource.groupVersion.version;
     if (resource.namespaced) {

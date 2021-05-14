@@ -12,11 +12,6 @@ export async function deleteObjectFromActiveEditor() {
 	let text = document.getText();
 	let obj = YAML.parse(text);
 
-  let uri = obj?.metadata?.selfLink;
-	if (!uri) {
-		throw new Error('Invalid YAML: no selfLink');
-	}
-
-	await kube.api.delete(uri);
+	await kube.api.delete(kube.api.getObjectUri(obj));
   await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 }

@@ -89,7 +89,6 @@ export function activate(context: vscode.ExtensionContext) {
 			kind: 'PersistentVolume',
 			metadata: {
 				name: pvName,
-				selfLink: '/api/v1/persistentvolumes/' + pvName,  // TODO: remove
 			},
 		}));
 	})));

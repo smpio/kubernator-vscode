@@ -6,7 +6,6 @@
 - compare with saved (compare dirty)
 - discover only preferred
 - status icons near deployments, ds, etc
-- metadata.selfLink is deprecated
 - open ns obj on click on namespace
 - load resources using api group with only preferredVersion, load non-preferred when needed only
 - special view: some objects can have special view (simple describe, or complex graphs)

@@ -25,7 +25,6 @@ export interface Object {
   kind: string,
   metadata: {
     name: string;
-    selfLink: string;
     namespace?: string;
   };
 }

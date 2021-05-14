@@ -24,7 +24,8 @@ export function ttlCache(ttlMs: number) {
 }
 
 export function objectUri(obj: kube.Object) {
-  return vscode.Uri.parse(`${interfaces.DOCUMENT_SCHEME}:${obj.metadata.selfLink}.yaml`);
+  let path = kube.api.getObjectUri(obj);
+  return vscode.Uri.parse(`${interfaces.DOCUMENT_SCHEME}:${path}.yaml`);
 }
 
 export function deepEqual(obj1: any, obj2: any) {
