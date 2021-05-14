@@ -6,7 +6,6 @@
 - compare with saved (compare dirty)
 - discover only preferred
 - reveal
-- PVC -> right click -> Go to PV
 - status icons near deployments, ds, etc
 - metadata.selfLink is deprecated
 - open ns obj on click on namespace

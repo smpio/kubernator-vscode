@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - close active editor on create
 - [strip managedFields](https://github.com/kubernetes/kubernetes/pull/96878)
+- PVC -> right click -> Go to PV
 
 ## [0.1.1] - 2021-05-13
 ### Changed
