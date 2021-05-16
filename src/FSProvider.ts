@@ -77,6 +77,13 @@ export class FSProvider implements vscode.FileSystemProvider {
         delete obj.metadata.managedFields;
       }
 
+      if (config.stripKubectlLastAppliedConfiguration && obj.metadata?.annotations) {
+        delete obj.metadata.annotations['kubectl.kubernetes.io/last-applied-configuration'];
+        if (Object.keys(obj.metadata.annotations).length === 0) {
+          delete obj.metadata.annotations;
+        }
+      }
+
       let text = YAML.stringify(obj, {
         indentSeq: false,
       });

@@ -191,6 +191,11 @@
             "type": "boolean",
             "default": false,
             "description": "disable stripping of object.metadata.managedFields"
+          },
+          "kubernator.stripKubectlLastAppliedConfiguration": {
+            "type": "boolean",
+            "default": true,
+            "description": "strip `kubectl.kubernetes.io/last-applied-configuration` annotation"
           }
         }
       }
