@@ -48,7 +48,7 @@ class RootNode extends Node {
 
   @ttlCache(CACHE_TTL_MS)
   async getChildren() {
-    let namespaces = await kube.api.list(kube.api.groups[''].preferredVersion.resourcesByKind.Namespace);
+    let namespaces = await kube.api.list(kube.api.groups[''].bestVersion.resourcesByKind.Namespace);
     return [undefined, ...namespaces].map(ns => new NamespaceNode(ns?.metadata.name));
   }
 
@@ -93,8 +93,7 @@ class NamespaceNode extends Node {
       }
       return name1.localeCompare(name2);
     });
-    let groupVersions = groups.map(g => g.preferredVersion);
-    let children = groupVersions.map(gv => new GroupNode(gv, this.ns));
+    let children = groups.map(g => new GroupNode(g, this.ns));
 
     if (config.excludeEmpty) {
       children = await excludeEmpty(children);
@@ -108,25 +107,25 @@ class NamespaceNode extends Node {
 }
 
 export class GroupNode extends Node {
-  public gv: kube.GroupVersion;
+  public group: kube.Group;
   public ns?: string;
 
-  constructor(gv: kube.GroupVersion, ns?: string) {
+  constructor(group: kube.Group, ns?: string) {
     let config = vscode.workspace.getConfiguration('kubernator');
 
     let collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
-    if (config.expandCoreGroup && gv.group.name === '' ||
-        config.expandUndottedGroups && gv.group.name.indexOf('.') === -1) {
+    if (config.expandCoreGroup && group.name === '' ||
+        config.expandUndottedGroups && group.name.indexOf('.') === -1) {
       collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
     }
 
-    let label = gv.group.name === '' ? CORE_API_GROUP_NAME : gv.group.name;
+    let label = group.name === '' ? CORE_API_GROUP_NAME : group.name;
 
     super(label, collapsibleState);
     this.contextValue = 'folder group';
-    this.gv = gv;
+    this.group = group;
     this.ns = ns;
-    this.id = nodeID.group(gv, ns);
+    this.id = nodeID.group(group, ns);
   }
 
   @ttlCache(CACHE_TTL_MS)
@@ -144,7 +143,7 @@ export class GroupNode extends Node {
       return !!this.ns === r.namespaced;
     };
 
-    let resources = Object.values(this.gv.resourcesByKind).filter(resourceDoesMatch);
+    let resources = Object.values(this.group.bestVersion.resourcesByKind).filter(resourceDoesMatch);
     let children = resources.map(r => new ResourceNode(r, this.ns));
 
     if (config.excludeEmpty) {
@@ -180,7 +179,7 @@ export class ResourceNode extends Node {
   }
 
   getParent() {
-    return new GroupNode(this.resource.groupVersion, this.ns);
+    return new GroupNode(this.resource.groupVersion.group, this.ns);
   }
 }
 
@@ -242,7 +241,7 @@ async function asyncFilter<T>(arr: T[], predicate: (value: T) => Promise<boolean
 
 const nodeID = {
   namespace: (ns?: string) => ns ?? 'GLOBAL',
-  group: (gv: kube.GroupVersion, ns?: string) => nodeID.namespace(ns) + ':' + gv.group.name,
-  resource: (resource: kube.Resource, ns?: string) => nodeID.group(resource.groupVersion, ns) + ':' + resource.kind,
+  group: (group: kube.Group, ns?: string) => nodeID.namespace(ns) + ':' + group.name,
+  resource: (resource: kube.Resource, ns?: string) => nodeID.group(resource.groupVersion.group, ns) + ':' + resource.kind,
   object: (obj: kube.Object) => nodeID.resource(kube.api.getResource(obj), obj.metadata.namespace) + ':' + obj.metadata.name,
 };

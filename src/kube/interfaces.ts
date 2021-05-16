@@ -2,6 +2,10 @@ export interface Group {
   name: string;
   versions: {[version: string]: GroupVersion};
   preferredVersion: GroupVersion;
+  bestVersion: {
+    resourcesByKind: {[kind: string]: Resource};
+    resourcesByName: {[name: string]: Resource};
+  };
 }
 
 export interface GroupVersion {

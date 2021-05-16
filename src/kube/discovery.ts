@@ -1,4 +1,4 @@
-import { Group, Resource } from "./interfaces";
+import { Group, GroupVersion, Resource } from "./interfaces";
 
 type FetchFunction = (uri: string) => any;
 
@@ -30,9 +30,13 @@ async function discoverGroup(rawGroup: any, fetch: FetchFunction): Promise<Group
     name: rawGroup.name,
     versions: {} as {[version: string]: any},
     preferredVersion: null as any,
+    bestVersion: {
+      resourcesByKind: {} as {[kind: string]: Resource},
+      resourcesByName: {} as {[kind: string]: Resource},
+    },
   };
 
-  let promises = rawGroup.versions.map(async (rawGV: any) => {
+  let promises: Promise<GroupVersion>[] = rawGroup.versions.map(async (rawGV: any) => {
     let resourceListUri = rawGroup.name === '' ? 'api/' + rawGV.version : 'apis/' + rawGV.groupVersion;
     let resources = parseResourceList(await fetch(resourceListUri));
     let gv = {
@@ -46,9 +50,26 @@ async function discoverGroup(rawGroup: any, fetch: FetchFunction): Promise<Group
     if (rawGV.groupVersion === rawGroup.preferredVersion.groupVersion) {
       group.preferredVersion = gv;
     }
+    return gv;
   });
 
-  await Promise.all(promises);
+  let groupVersions = await Promise.all(promises);
+
+  // first we assume that resources of latest version are best
+  for (let gv of groupVersions) {
+    for (let resource of Object.values(gv.resourcesByKind)) {
+      group.bestVersion.resourcesByKind[resource.kind] = resource;
+      group.bestVersion.resourcesByName[resource.name] = resource;
+    }
+  }
+
+  // if there is preferred version of resource, use it
+  for (let resource of Object.values(group.preferredVersion.resourcesByKind)) {
+    let r = resource as Resource;
+    group.bestVersion.resourcesByKind[r.kind] = r;
+    group.bestVersion.resourcesByName[r.name] = r;
+  }
+
   return group;
 }
 
