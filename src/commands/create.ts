@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as YAML from 'yaml';
+import * as yaml from '../yaml';
 import * as kube from '../kube';
 import { objectUri, closeActiveEditor } from '../util';
 
@@ -11,7 +11,7 @@ export async function createObjectFromActiveEditor() {
 
 	let document = editor.document;
 	let text = document.getText();
-	let obj = YAML.parse(text);
+	let obj = yaml.parse(text);
 
 	if (!obj.apiVersion) {
 		throw new Error('Invalid YAML: apiVersion not specified');

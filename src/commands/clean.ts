@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as YAML from 'yaml';
+import * as yaml from '../yaml';
 import * as kube from '../kube';
 import { deepEqual } from '../util';
 import { Definition } from '../kube/interfaces';
@@ -14,7 +14,7 @@ export async function cleanObjectInActiveEditor() {
 
 	let document = editor.document;
 	let text = document.getText();
-	let obj = YAML.parse(text);
+	let obj = yaml.parse(text);
 
 	if (typeof obj !== 'object') {
 		return;
@@ -29,9 +29,7 @@ export async function cleanObjectInActiveEditor() {
 
 	cleanYamlRecursive(obj, resource.definition);
 
-	text = YAML.stringify(obj, {
-		indentSeq: false,
-	});
+	text = yaml.stringify(obj);
 
 	if (document.isUntitled) {
 		let all = new vscode.Range(new vscode.Position(0, 0), new vscode.Position(document.lineCount, 0));
@@ -47,6 +45,7 @@ export async function cleanObjectInActiveEditor() {
 	}
 }
 
+// TODO: clean empty mappings after clean
 function cleanYamlRecursive(yaml: any, def: Definition) {
 	if (def.type === 'ref') {
 		def = kube.api.definitions[def.$ref];

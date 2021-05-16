@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.1] - 2021-05-16
 ### Fixed
 - some resources (kinds) may have schema only for non-preferred group version (e.g. batch/v1beta1 CronJob in 1.8)
+- prevent from outputting complex YAML keys
 
 ## [0.3.0] - 2021-05-16
 ### Added

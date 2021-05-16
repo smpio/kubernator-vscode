@@ -1,5 +1,5 @@
 import * as nodePath from 'path';
-import * as YAML from 'yaml';
+import * as yaml from './yaml';
 import * as vscode from 'vscode';
 import * as kube from './kube';
 import * as interfaces from './interfaces';
@@ -84,10 +84,7 @@ export class FSProvider implements vscode.FileSystemProvider {
         }
       }
 
-      let text = YAML.stringify(obj, {
-        indentSeq: false,
-      });
-
+      let text = yaml.stringify(obj);
       return Buffer.from(text);
     }
 

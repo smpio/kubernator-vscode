@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as YAML from 'yaml';
+import * as yaml from '../yaml';
 import * as kube from '../kube';
 
 export async function deleteObjectFromActiveEditor() {
@@ -10,7 +10,7 @@ export async function deleteObjectFromActiveEditor() {
 
 	let document = editor.document;
 	let text = document.getText();
-	let obj = YAML.parse(text);
+	let obj = yaml.parse(text);
 
 	await kube.api.delete(kube.api.getObjectUri(obj));
   await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
