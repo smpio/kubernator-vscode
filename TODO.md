@@ -1,6 +1,5 @@
 # TODO
 
-- yes/no are booleans (https://github.com/kubernetes/kubernetes/issues/34146)
 - refresh tree on save/delete
 - status icons near deployments, ds, etc
 
