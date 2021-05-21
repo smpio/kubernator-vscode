@@ -103,7 +103,9 @@ export async function activate(context: vscode.ExtensionContext) {
 			metadata: {
 				name: pvName,
 			},
-		}));
+		}), {
+			focus: true,
+		});
 	})));
 
 	d(vscode.commands.registerCommand('kubernator.reveal', handleCommandErrors(() => revealObjectInActiveEditor(treeView))));

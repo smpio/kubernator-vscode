@@ -20,5 +20,7 @@ export function revealObjectInActiveEditor(treeView: vscode.TreeView<Node>) {
     throw Error('No object metadata');
   }
 
-  treeView.reveal(new ObjectNode(obj));
+  treeView.reveal(new ObjectNode(obj), {
+		focus: true,
+	});
 }
