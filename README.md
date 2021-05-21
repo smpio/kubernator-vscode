@@ -46,6 +46,12 @@ Important commands:
 * `Kubernator: Reconfigure`: reload API resources and manifest schema (executed on startup, maybe required after CRD installation or cluster upgrade)
 
 
+## Context menu actions
+
+* `Pod` → `Shell`: create terminal with command `kubectl -n NS exec -it POD_NAME -- sh`
+* `PVC` → `Go to PV`: reveal PV bound to the PVC
+
+
 ## Settings
 
 See **Feature Contributions** extension page.
