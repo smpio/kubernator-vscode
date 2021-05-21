@@ -1,8 +1,6 @@
 # TODO
 
-- refresh tree on save/delete
 - status icons near deployments, ds, etc
-
 - fsprovider -> readDirectory (for topbar nav)
 - shadow non-interesting fields, make this configurable (maybe shadow defaults)
 - links https://github.com/Azure/vscode-kubernetes-tools/blob/master/src/kuberesources.linkprovider.ts

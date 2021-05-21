@@ -8,6 +8,7 @@ import { cleanObjectInActiveEditor } from './commands/clean';
 import { deleteObjectFromActiveEditor } from './commands/delete';
 import { revealObjectInActiveEditor } from './commands/reveal';
 import { startShell } from './commands/shell';
+import { waitObjectDeleted } from './util';
 
 export async function activate(context: vscode.ExtensionContext) {
 	let d = context.subscriptions.push.bind(context.subscriptions);
@@ -42,7 +43,12 @@ export async function activate(context: vscode.ExtensionContext) {
 	d(vscode.commands.registerCommand('kubernator.reconfigure', reconfigure));
 
 	d(vscode.commands.registerCommand('kubernator.refresh', (node?: Node) => {
-		treeDataProvider.invalidate(node);
+		if (node) {
+			let clone = node.clone();
+			treeDataProvider.invalidate(clone);
+		} else {
+			treeDataProvider.invalidate(node);
+		}
 	}));
 
 	let treeView = vscode.window.createTreeView('kubernator.treeView', {
@@ -81,9 +87,12 @@ export async function activate(context: vscode.ExtensionContext) {
 	d(vscode.commands.registerCommand('kubernator.delete', handleCommandErrors(async (node?: ObjectNode) => {
 		if (node) {
 			await fsProvider.delete(node.resourceUri, {recursive: false});
-			treeDataProvider.invalidate(node.getParent());
+			if (await waitObjectDeleted(node.obj)) {
+				let parent = node.getParent();
+				treeDataProvider.invalidate(parent);
+			}
 		} else {
-			deleteObjectFromActiveEditor();
+			deleteObjectFromActiveEditor(treeDataProvider);
 		}
 	})));
 

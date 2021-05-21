@@ -4,6 +4,7 @@ import * as path from 'path';
 import fetch from 'node-fetch';
 import { Agent, AgentOptions } from 'http';
 import { spawn, ChildProcess } from 'child_process';
+import {timeout} from '../util';
 
 const SOCKET_CREATE_TIMEOUT = 10000;
 const API_READY_TIMEOUT = 10000;
@@ -100,10 +101,6 @@ function spawnSocket(cmd: string[], socketPath: string): Promise<ChildProcess> {
       reject(new Error(`Timeout waiting for ${cmd} to create socket`));
     }, SOCKET_CREATE_TIMEOUT);
   });
-}
-
-async function timeout(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function stat(path: string) {

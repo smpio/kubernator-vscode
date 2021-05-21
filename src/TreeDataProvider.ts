@@ -37,6 +37,7 @@ export class TreeDataProvider implements vscode.TreeDataProvider<Node> {
 export abstract class Node extends vscode.TreeItem {
   abstract getChildren(): vscode.ProviderResult<Node[]>;
   abstract getParent(): vscode.ProviderResult<Node>;
+  abstract clone(): Node;
 }
 
 class RootNode extends Node {
@@ -54,6 +55,10 @@ class RootNode extends Node {
 
   getParent() {
     return null;
+  }
+
+  clone() {
+    return new RootNode();
   }
 }
 
@@ -103,6 +108,10 @@ class NamespaceNode extends Node {
 
   getParent() {
     return null;
+  }
+
+  clone() {
+    return new NamespaceNode(this.ns);
   }
 }
 
@@ -155,6 +164,10 @@ export class GroupNode extends Node {
   getParent() {
     return new NamespaceNode(this.ns);
   }
+
+  clone() {
+    return new GroupNode(this.group, this.ns);
+  }
 }
 
 export class ResourceNode extends Node {
@@ -181,6 +194,10 @@ export class ResourceNode extends Node {
   getParent() {
     return new GroupNode(this.resource.groupVersion.group, this.ns);
   }
+
+  clone() {
+    return new ResourceNode(this.resource, this.ns);
+  }
 }
 
 export class ObjectNode extends Node {
@@ -205,6 +222,10 @@ export class ObjectNode extends Node {
   getParent() {
     return new ResourceNode(kube.api.getResource(this.obj), this.obj.metadata.namespace);
   }
+
+  clone() {
+    return new ObjectNode(this.obj);
+  }
 }
 
 class ErrorNode extends Node {
@@ -221,6 +242,10 @@ class ErrorNode extends Node {
 
   getParent() {
     return null;
+  }
+
+  clone() {
+    return new ErrorNode(this.err);
   }
 }
 

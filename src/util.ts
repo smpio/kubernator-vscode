@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 import * as interfaces from './interfaces';
 import * as kube from './kube';
 import * as assert from 'assert';
+import {Object} from './kube/interfaces';
+import {APIError} from './kube/api';
 
 const CACHE_PROP = Symbol('ttlCache');
 
@@ -51,4 +53,32 @@ export function closeActiveEditor() {
 	}
 
 	vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+}
+
+export async function waitObjectDeleted(obj: Object, timeoutSec: number = 15) {
+  let uri = kube.api.getObjectUri(obj);
+  let giveupAt = new Date().getTime() + timeoutSec * 1000;
+  let delay = 1000;
+
+  while (new Date().getTime() < giveupAt) {
+    try {
+      await kube.api.fetch(uri);
+    } catch (err) {
+      if (err instanceof APIError) {
+        if (err.response.status === 404) {
+          return true;
+        }
+      }
+      throw err;
+    }
+
+    await timeout(delay);
+    delay *= 2;
+  }
+
+  return false;
+}
+
+export async function timeout(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
