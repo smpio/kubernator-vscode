@@ -7,6 +7,7 @@ import { createObjectFromActiveEditor } from './commands/create';
 import { cleanObjectInActiveEditor } from './commands/clean';
 import { deleteObjectFromActiveEditor } from './commands/delete';
 import { revealObjectInActiveEditor } from './commands/reveal';
+import { startShell } from './commands/shell';
 
 export async function activate(context: vscode.ExtensionContext) {
 	let d = context.subscriptions.push.bind(context.subscriptions);
@@ -110,50 +111,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	d(vscode.commands.registerCommand('kubernator.edit', handleCommandErrors(
 		(node: ObjectNode) => vscode.commands.executeCommand('vscode.open', node.resourceUri))));
 
-	d(vscode.commands.registerCommand('kubernator.shell', handleCommandErrors(async (node: ObjectNode) => {
-		let shellsToTry = ['sh'];
-		let pod = node.obj as any;
-
-		if (pod.spec?.containers?.length > 1) {
-			let selected = await vscode.window.showQuickPick(pod.spec.containers.map((c: any) => c.name));
-
-			if (!selected) {
-				return;
-			}
-
-			runExec(shellsToTry, selected);
-		} else {
-			runExec(shellsToTry);
-		}
-
-		function runExec(shells: string[], container?: string) {
-			const terminal = vscode.window.createTerminal(pod.metadata.name);
-			d(terminal);
-
-			let shell = shells[0];
-
-			let containerOpts = '';
-			if (container) {
-				containerOpts = '-c ' + container;
-			}
-
-			terminal.sendText(`exec kubectl -n ${pod.metadata.namespace} exec -it ${pod.metadata.name} ${containerOpts} -- ${shell}`);
-			terminal.show();
-
-			if (shells.length > 1) {
-				let closeHandler = vscode.window.onDidCloseTerminal(t => {
-					if (t !== terminal) {
-						return;
-					}
-
-					if (t.exitStatus?.code === 126) {
-						runExec(shells.slice(1));
-					}
-					closeHandler.dispose();
-				});
-			}
-		}
-	})));
+	d(vscode.commands.registerCommand('kubernator.shell', handleCommandErrors(startShell)));
 }
 
 export function deactivate() {
