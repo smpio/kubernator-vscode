@@ -63,7 +63,7 @@ class NamespaceNode extends Node {
   constructor(ns?: string) {
     let label = ns ?? GLOBAL_PSEUDO_NAMESPACE;
     super(label, vscode.TreeItemCollapsibleState.Collapsed);
-    this.contextValue = 'folder namespace';
+    this.contextValue = ns ? 'folder namespace' : 'folder';
     this.ns = ns;
     this.id = nodeID.namespace(ns);
 
