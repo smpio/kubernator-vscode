@@ -103,7 +103,14 @@ export class FSProvider implements vscode.FileSystemProvider {
 
     await kube.api.ready;
     let {path, mimetype} = explodeUri(uri);
-    await kube.api.put(path, content, mimetype);
+    try {
+      await kube.api.put(path, content, mimetype);
+    } catch (err) {
+      if (err instanceof kube.APIError && err.response.status === 409) {
+        await vscode.window.showErrorMessage(err.message, "Discard", "Overwrite");
+        throw err;
+      }
+    }
     this.forceReloadFiles.add(uri.path);
   }
 

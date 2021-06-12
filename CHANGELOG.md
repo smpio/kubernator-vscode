@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 - disable "folding" of YAML block scalars, which replaces "|" with ">"
 - prevent saving of manifests in non-active tabs
+- on save conflict add option to overwrite (this can be done by removing resourceVersion)
 
 ## [0.3.3] - 2012-05-21
 - focus on reveal
