@@ -94,7 +94,11 @@ export class FSProvider implements vscode.FileSystemProvider {
   async writeFile(uri: vscode.Uri, content: Uint8Array, options: { create: boolean; overwrite: boolean; }): Promise<void> {
   	if (!vscode.window.state.focused) {
       // prevent autosave, see https://github.com/Microsoft/vscode/issues/42170
-      throw new Error('Not saving file without window focus!');
+      throw new Error('Not saving file without focus!');
+    }
+    if (vscode.window.activeTextEditor?.document.uri.toString() !== uri.toString()) {
+      // prevent saving inactive file
+      throw new Error('Not saving file without focus!');
     }
 
     await kube.api.ready;
