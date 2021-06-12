@@ -101,9 +101,13 @@ export class FSProvider implements vscode.FileSystemProvider {
       throw new Error('Not saving file without focus!');
     }
 
+    // we could use raw content with kube.api.put,
+    // but we need to apply some manifest preprocessing first
+    let obj = yaml.parse(content.toString());
+
     await kube.api.ready;
-    let {path, mimetype} = explodeUri(uri);
-    await kube.api.put(path, content, mimetype);
+    let {path} = explodeUri(uri);
+    await kube.api.put(path, JSON.stringify(obj), 'application/json');
     this.forceReloadFiles.add(uri.path);
   }
 

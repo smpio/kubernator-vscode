@@ -1,37 +1,36 @@
+import * as vscode from 'vscode';
 import * as YAML from 'yaml';
+import fromEntries = require('fromentries');
 
-interface ParseOptions {
-  encodeSecrets?: boolean;
-}
-
-interface StringifyOptions {
-  decodeSecrets?: boolean;
-}
 
 // disable "folding" of block scalars, which replaces "|" with ">"
 YAML.scalarOptions.str.fold.lineWidth = 0;
 
 
-export function parse(str: string, {encodeSecrets = false}: ParseOptions = {}): any {
+export function parse(str: string): any {
+  let config = vscode.workspace.getConfiguration('kubernator');
+
   let value = YAML.parse(str, {
     version: '1.1',
   });
 
-  if (encodeSecrets && value.apiVersion === 'v1' && value.kind === 'Secret') {
+  if (config.decodeSecrets && value.apiVersion === 'v1' && value.kind === 'Secret') {
     value = {
       ...value,
-      data: Object.fromEntries(Object.entries(value.data).map(([k, v]) => [k, b64encode(v as string)])),
+      data: fromEntries(Object.entries(value.data).map(([k, v]) => [k, b64encode(v as string)])),
     };
   }
 
   return value;
 }
 
-export function stringify(value: any, {decodeSecrets = false}: StringifyOptions = {}): string {
-  if (decodeSecrets && value.apiVersion === 'v1' && value.kind === 'Secret') {
+export function stringify(value: any): string {
+  let config = vscode.workspace.getConfiguration('kubernator');
+
+  if (config.decodeSecrets && value.apiVersion === 'v1' && value.kind === 'Secret') {
     value = {
       ...value,
-      data: Object.fromEntries(Object.entries(value.data).map(([k, v]) => [k, b64decode(v as string)])),
+      data: fromEntries(Object.entries(value.data).map(([k, v]) => [k, b64decode(v as string)])),
     };
   }
 

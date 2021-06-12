@@ -24,7 +24,7 @@ export async function createObjectFromActiveEditor() {
 	let resource = kube.api.getResource(obj.apiVersion, obj.kind);
 	let postUri = kube.api.getResourceUri(resource, obj.metadata?.namespace);
 
-	obj = await kube.api.post(postUri, text, 'application/yaml').then(r => r.json());
+	obj = await kube.api.post(postUri, JSON.stringify(obj), 'application/json').then(r => r.json());
 
 	closeActiveEditor();
 	vscode.commands.executeCommand('vscode.open', objectUri(obj));
