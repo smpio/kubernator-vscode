@@ -1,5 +1,10 @@
 # TODO
 
+- prometheus config formatting
+- check https://github.com/itaysk/kubectl-neat
+
+- on save conflict add option to overwrite (this can be done by removing resourceVersion)
+- secret encoding/decoding
 - refresh tree on save/delete
 - status icons near deployments, ds, etc
 
