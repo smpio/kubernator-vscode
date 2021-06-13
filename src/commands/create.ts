@@ -27,6 +27,5 @@ export async function createObjectFromActiveEditor() {
 	obj = await kube.api.post(postUri, JSON.stringify(obj), 'application/json').then(r => r.json());
 
 	closeActiveEditor();
-	vscode.commands.executeCommand('vscode.open', objectUri(obj));
-	// vscode.window.showTextDocument(objectUri(obj), { preview: false });
+	vscode.window.showTextDocument(objectUri(obj), { preview: false });
 }
