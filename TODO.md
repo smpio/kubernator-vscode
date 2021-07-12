@@ -1,7 +1,6 @@
 # TODO
 
 - update packages (see new `yo code` output)
-- base64 decode: convert value to map with single item: "decoded: ..." and handle this on save, also don't decode if there are non-printable characters
 - on save conflict add option to overwrite (this can be done by removing resourceVersion)
 - refresh tree on save/delete
 - status icons near deployments, ds, etc
