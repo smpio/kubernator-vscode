@@ -5,6 +5,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 - open created manifest (command `Kubernator: Create`) in non-preview editor
+- fix creating objects in default namespace
 
 ## [0.4.0] - 2012-06-12
 - disable "folding" of YAML block scalars, which replaces "|" with ">"

@@ -94,7 +94,7 @@ export default class API {
     }
     uri += '/' + resource.groupVersion.version;
     if (resource.namespaced) {
-      uri += '/namespaces/' + namespace;
+      uri += '/namespaces/' + (namespace ?? 'default');
     }
     uri += '/' + resource.name;
     return uri;
