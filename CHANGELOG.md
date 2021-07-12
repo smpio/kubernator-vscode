@@ -3,17 +3,17 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.4.1] - 2021-07-13
 - open created manifest (command `Kubernator: Create`) in non-preview editor
 - fix creating objects in default namespace
 - base64 decode: convert value to map with single item: "decoded: ..." and handle this on save, also don't decode if there are non-printable characters
 
-## [0.4.0] - 2012-06-12
+## [0.4.0] - 2021-06-12
 - disable "folding" of YAML block scalars, which replaces "|" with ">"
 - prevent saving of manifests in non-active tabs
 - secret encoding/decoding
 
-## [0.3.3] - 2012-05-21
+## [0.3.3] - 2021-05-21
 - focus on reveal
 
 ## [0.3.2] - 2021-05-18
