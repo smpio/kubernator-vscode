@@ -1,5 +1,14 @@
 # TODO
 
+- multicluster (but one cluster per vscode instance, because no cluster in manifests)
+- bug:
+  1. open CronJob (hereinafter the "cj1")
+  2. "Clean" it
+  3. delete cj1
+  4. save cleaned cronjob
+  5. the tab is replaced with empty content
+- clean Job (labels controller-uid, job-name)
+
 - update packages (see new `yo code` output)
 - on save conflict add option to overwrite (this can be done by removing resourceVersion)
 - refresh tree on save/delete
