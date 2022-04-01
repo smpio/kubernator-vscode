@@ -293,8 +293,19 @@ function getObjectDecorator (obj: any): ObjectDecorator|undefined {
       }
     }
 
+    if (s.containerStatuses !== undefined) {
+      let reasons = s.containerStatuses.map((s: any) => s.state.terminated?.reason ?? s.state.waiting?.reason);
+      let reason = reasons.find((r: any) => !!r);
+      if (reason) {
+        return {
+          text: reason,
+          color: 'notebookStatusErrorIcon.foreground',
+        };
+      }
+    }
+
     if (s.phase !== undefined) {
-      if (s.phase === 'Bound') {
+      if (s.phase === 'Bound' || s.phase === 'Succeeded') {
         return decorators.success;
       } else {
         return {

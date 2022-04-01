@@ -5,6 +5,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.1] - 2022-??-??
 - updated dependencies
+- Pod statuses in tree
 
 ## [0.5.0] - 2022-04-01
 - switching kubectl contexts
