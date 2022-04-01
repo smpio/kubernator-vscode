@@ -10,10 +10,14 @@ export function ttlCache(ttlMs: number) {
     let method = descriptor.value!;
 
     descriptor.value = function cached () {
-      let cache = (this as any)[CACHE_PROP];
+      let cacheStore = (this as any)[CACHE_PROP];
+      if (!cacheStore) {
+        cacheStore = (this as any)[CACHE_PROP] = {};
+      }
+      let cache = cacheStore[CACHE_PROP];
 
       if (!cache || Date.now() - cache.time > ttlMs) {
-        cache = (this as any)[CACHE_PROP] = {
+        cache = cacheStore[CACHE_PROP] = {
           value: method.apply(this, arguments),
           time: Date.now(),
         };
