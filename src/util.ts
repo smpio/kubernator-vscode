@@ -27,6 +27,13 @@ export function ttlCache(ttlMs: number) {
   };
 }
 
+export function ttlCacheClear(target: any, propertyName: string) {
+  let cacheStore = target[CACHE_PROP];
+  if (cacheStore) {
+    delete cacheStore[propertyName];
+  }
+}
+
 export function objectUri(obj: kube.Object) {
   let path = kube.api.getObjectUri(obj);
   return vscode.Uri.parse(`${interfaces.DOCUMENT_SCHEME}:/${path}.yaml`);

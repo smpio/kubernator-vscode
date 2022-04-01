@@ -1,7 +1,7 @@
 # TODO
 
-- invalidate doesn't clear cache (if not root)
-- treeview title
+- double requests
+- treeview title, message, description
 - AgentOptions socketPath update
 - bug:
   1. open CronJob (hereinafter the "cj1")
@@ -10,6 +10,8 @@
   4. save cleaned cronjob
   5. the tab is replaced with empty content
 - clean Job (labels controller-uid, job-name)
+- clean Pod
+- extract Pod from Deployment, StatefulSet, etc
 
 - update packages (see new `yo code` output)
 - on save conflict add option to overwrite (this can be done by removing resourceVersion)

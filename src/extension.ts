@@ -90,7 +90,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		if (expandedElements.has(element.id)) {
 			setTimeout(() => {
-				treeDataProvider.invalidate(element);
+				treeDataProvider.invalidate(element, {keepCache: true});
 			}, 1000);
 		} else {
 			expandedElements.add(element.id);

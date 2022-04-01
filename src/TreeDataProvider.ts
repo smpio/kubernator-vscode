@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as kube from './kube';
-import { ttlCache, objectUri } from './util';
+import { ttlCache, objectUri, ttlCacheClear } from './util';
 
 const GLOBAL_PSEUDO_NAMESPACE = '[global]';
 const CORE_API_GROUP_NAME = '[core]';
@@ -29,11 +29,15 @@ export class TreeDataProvider implements vscode.TreeDataProvider<Node> {
     return element.getParent();
   }
 
-  invalidate(element?: Node) {
-    if (!element) {
-      // invalidate cache
-      this.root = new RootNode();
+  invalidate(element?: Node, {keepCache = false}: {keepCache: boolean} = {keepCache: false}) {
+    if (!keepCache) {
+      if (!element) {
+        this.root.invalidate();
+      } else {
+        element.invalidate();
+      }
     }
+
     this._onDidChangeTreeData.fire(element);
   }
 }
@@ -41,6 +45,10 @@ export class TreeDataProvider implements vscode.TreeDataProvider<Node> {
 export abstract class Node extends vscode.TreeItem {
   abstract getChildren(): vscode.ProviderResult<Node[]>;
   abstract getParent(): vscode.ProviderResult<Node>;
+
+  invalidate(): void {
+    ttlCacheClear(this, 'getChildren');
+  }
 }
 
 class RootNode extends Node {
