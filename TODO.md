@@ -1,5 +1,6 @@
 # TODO
 
+- remove `await kube.api.ready`
 - if object is changed during save, try to save if it is safe (automerge) https://code.visualstudio.com/docs/getstarted/tips-and-tricks#_preventing-dirty-writes
 - compare with saved (compare dirty)
 

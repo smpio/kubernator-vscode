@@ -5,8 +5,8 @@ import * as kube from './kube';
 import * as interfaces from './interfaces';
 
 const EXT_MIMETYPE_MAP: {[ext: string]: string} = {
-  '.yaml': 'application/yaml',
-  '.json': 'application/json',
+  '.yaml': 'application/yaml',  // eslint-disable-line @typescript-eslint/naming-convention
+  '.json': 'application/json',  // eslint-disable-line @typescript-eslint/naming-convention
 };
 
 // TODO: add fetch cache for sequence "stat, read"
