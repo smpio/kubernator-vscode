@@ -81,20 +81,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	// after collapsing the item.
 	// Another approach would be calling invalidate immediately after expand, but this will lead to
 	// race conditions. See 06f58be for details.
-	let expandedElements = new Set<string>();
 	treeView.onDidExpandElement(e => {
-		let element = e.element;
-		if (!element.id) {
-			return;
-		}
-
-		if (expandedElements.has(element.id)) {
-			setTimeout(() => {
-				treeDataProvider.invalidate(element, {keepCache: true});
-			}, 1000);
-		} else {
-			expandedElements.add(element.id);
-		}
+		setTimeout(() => {
+			treeDataProvider.invalidate(e.element, {keepCache: true});
+		}, 1000);
 	});
 
 	let fsProvider = new FSProvider();
