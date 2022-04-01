@@ -160,7 +160,7 @@ export default class API {
   }
 
   async request(method: string, uri: string, options: {accept: string, contentType?: string, body?: BodyInit}): Promise<Response> {
-    console.debug(method, uri);
+    console.log(method, uri);
 
     let url = new URL(uri, this.apiURL);
     let headers: any = {

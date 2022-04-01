@@ -1,6 +1,5 @@
 # TODO
 
-- double requests
 - treeview title, message, description
 - AgentOptions socketPath update
 - bug:
