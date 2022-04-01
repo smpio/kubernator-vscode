@@ -1,6 +1,5 @@
 # TODO
 
-- clean Pod
 - status icons near deployments, ds, etc
 - refresh tree on save/delete
 - if object is changed during save, try to save if it is safe (automerge) https://code.visualstudio.com/docs/getstarted/tips-and-tricks#_preventing-dirty-writes

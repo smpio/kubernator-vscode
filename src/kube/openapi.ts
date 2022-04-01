@@ -69,6 +69,7 @@ export async function loadDefinitions(fetch: FetchFunction) {
 
   scheme.definitions['io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta'].properties.finalizers.readOnly = true;
   scheme.definitions['io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta'].properties.ownerReferences.readOnly = true;
+  scheme.definitions['io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta'].properties.generateName.readOnly = true;
   scheme.definitions['io.k8s.api.core.v1.PodSpec'].properties.schedulerName.default = 'default-scheduler';
   scheme.definitions['io.k8s.api.core.v1.PodSecurityContext'].default = {};
   scheme.definitions['io.k8s.api.core.v1.ResourceRequirements'].default = {};

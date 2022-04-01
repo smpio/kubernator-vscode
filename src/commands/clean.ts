@@ -45,13 +45,17 @@ export async function cleanObjectInActiveEditor() {
 	}
 }
 
-// TODO: clean empty mappings after clean
 function cleanYamlRecursive(yaml: any, def: Definition) {
 	if (def.type === 'ref') {
 		let typeRef = def.$ref;
 
-		if (typeRef === 'io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta' && yaml.labels) {
-			cleanLabels(yaml.labels);
+		if (typeRef === 'io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta') {
+			if (yaml.labels) {
+				cleanLabels(yaml.labels);
+			}
+			if (yaml.annotations) {
+				cleanAnnotations(yaml.annotations);
+			}
 		}
 
 		if (typeRef === 'io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector' && yaml.matchLabels) {
@@ -115,4 +119,12 @@ function cleanYamlRecursive(yaml: any, def: Definition) {
 function cleanLabels(labels: any) {
 	delete labels['controller-uid'];
 	delete labels['job-name'];
+	delete labels['pod-template-hash'];
+}
+
+function cleanAnnotations(ann: any) {
+	delete ann['cni.projectcalico.org/containerID'];
+	delete ann['cni.projectcalico.org/podIP'];
+	delete ann['cni.projectcalico.org/podIPs'];
+	delete ann['kubernetes.io/psp'];
 }
