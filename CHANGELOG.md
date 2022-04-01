@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.5.0] - 2022-XX-xx
+## [0.5.0] - 2022-04-01
 - switching kubectl contexts
 - fixed possible situations, when "refresh" does nothing
 - improved Job manifest cleaning
