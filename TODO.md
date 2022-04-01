@@ -1,6 +1,5 @@
 # TODO
 
-- refresh tree on save/delete
 - if object is changed during save, try to save if it is safe (automerge) https://code.visualstudio.com/docs/getstarted/tips-and-tricks#_preventing-dirty-writes
 - compare with saved (compare dirty)
 
@@ -26,3 +25,7 @@ Or workaround not found.
 - editor looses cursor position after saving existing object
 
   Document is reloaded with changes from API server after save and this resets cursor.
+
+- refresh tree on save/delete
+
+  See branches refresh and refresh2 and https://stackoverflow.com/questions/67636127/vscode-extensions-treedataprovider-inconsistency
