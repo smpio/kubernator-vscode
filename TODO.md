@@ -1,6 +1,5 @@
 # TODO
 
-- clean empty mappings
 - clean Pod
 - status icons near deployments, ds, etc
 - refresh tree on save/delete

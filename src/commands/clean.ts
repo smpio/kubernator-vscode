@@ -106,6 +106,10 @@ function cleanYamlRecursive(yaml: any, def: Definition) {
 			}
 		}
 	}
+
+	if (Object.entries(yaml).length === 0) {
+		return DROP;
+	}
 }
 
 function cleanLabels(labels: any) {
