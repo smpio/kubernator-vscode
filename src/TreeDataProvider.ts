@@ -16,7 +16,9 @@ export class TreeDataProvider implements vscode.TreeDataProvider<Node> {
   }
 
   async getChildren(element?: Node) {
-    await kube.api.ready;
+    if (!kube.api.ready) {
+      return [];
+    }
 
     if (element) {
       return element.getChildren();

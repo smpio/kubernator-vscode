@@ -6,11 +6,16 @@ import * as openapi from './openapi';
 import { Group, Resource, Object, Definition } from './interfaces';
 
 export default class API {
+  private _ready = false;
+
   agent?: Agent;
   apiURL?: string;
-  ready: Promise<void> = new Promise(() => {});
   groups: {[groupName: string]: Group} = {};
   definitions: {[id: string]: Definition} = {};
+
+  get ready() {
+    return this._ready;
+  }
 
   configure(options: {apiURL?: string, socketPath?: string}): Promise<void> {
     this.groups = {};
@@ -28,7 +33,7 @@ export default class API {
       throw Error('Either apiURL or socketPath should be set');
     }
 
-    return this.ready = (async () => {
+    return (async () => {
       let fetch = (uri: string) => this.fetch(uri).then(r => r.json());
       let definitionsPromise = openapi.loadDefinitions(fetch);
       this.groups = await discovery.discoverAllGroups(fetch);
@@ -60,6 +65,8 @@ export default class API {
           resource.definition = def;
         }
       }
+
+      this._ready = true;
     })();
   }
 

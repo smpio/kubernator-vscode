@@ -12,13 +12,24 @@ import { startShell } from './commands/shell';
 const switchContextCommandId = 'kubernator.switchContext';
 
 export async function activate(context: vscode.ExtensionContext) {
-	let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-	let treeDataProvider = new TreeDataProvider();
+	function d<T extends vscode.Disposable>(disposable: T): T {
+		context.subscriptions.push(disposable);
+		return disposable;
+	}
+
 	let proxy: Proxy|null = null;
+	let statusBarItem = d(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
+	let fsProvider = new FSProvider();
+	let treeDataProvider = new TreeDataProvider();
+	let treeView = d(vscode.window.createTreeView('kubernator.treeView', {
+		treeDataProvider: treeDataProvider,
+		showCollapseAll: true,
+	}));
 
-	let d = context.subscriptions.push.bind(context.subscriptions);
+	d(vscode.workspace.registerFileSystemProvider(FSProvider.scheme, fsProvider, {
+		isCaseSensitive: true,
+	}));
 
-	d(statusBarItem);
 	statusBarItem.command = switchContextCommandId;
 	statusBarItem.text = 'Kubernating...';
 	statusBarItem.show();
@@ -27,7 +38,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		let config = vscode.workspace.getConfiguration('kubernator');
 
 		if (!ctx && config.apiURL) {
-			kube.api.configure({apiURL: config.apiURL});
+			await kube.api.configure({apiURL: config.apiURL});
 			statusBarItem.text = config.apiURL;
 		} else {
 			if (proxy && ctx && proxy.context !== ctx) {
@@ -48,7 +59,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				d(proxy);
 			}
 
-			kube.api.configure({socketPath: proxy.socketPath});
+			await kube.api.configure({socketPath: proxy.socketPath});
 			statusBarItem.text = ctx;
 		}
 
@@ -69,27 +80,15 @@ export async function activate(context: vscode.ExtensionContext) {
 		treeDataProvider.invalidate(node);
 	}));
 
-	let treeView = vscode.window.createTreeView('kubernator.treeView', {
-		treeDataProvider: treeDataProvider,
-		showCollapseAll: true,
-	});
-
-	d(treeView);
-
 	// Workaround for TreeView content caching
 	// By default, once tree view item has been expanded, its children are saved in cache that is not cleared
 	// after collapsing the item.
 	// Another approach would be calling invalidate immediately after expand, but this will lead to
 	// race conditions. See 06f58be for details.
-	treeView.onDidExpandElement(e => {
+	d(treeView.onDidExpandElement(e => {
 		setTimeout(() => {
 			treeDataProvider.invalidate(e.element, {keepCache: true});
 		}, 1000);
-	});
-
-	let fsProvider = new FSProvider();
-	d(vscode.workspace.registerFileSystemProvider(FSProvider.scheme, fsProvider, {
-		isCaseSensitive: true,
 	}));
 
 	d(vscode.commands.registerCommand('kubernator.delete', handleCommandErrors(async (node?: ObjectNode) => {
