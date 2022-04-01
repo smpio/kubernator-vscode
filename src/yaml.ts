@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import * as YAML from 'yaml';
-import fromEntries = require('fromentries');
 
 
 // disable "folding" of block scalars, which replaces "|" with ">"
