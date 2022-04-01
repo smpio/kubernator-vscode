@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.5.0] - 2022-XX-xx
 - switching kubectl contexts
 - fixed possible situations, when "refresh" does nothing
+- improved Job manifest cleaning
 
 ## [0.4.1] - 2021-07-13
 - open created manifest (command `Kubernator: Create`) in non-preview editor

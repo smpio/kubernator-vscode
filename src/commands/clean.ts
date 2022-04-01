@@ -48,6 +48,16 @@ export async function cleanObjectInActiveEditor() {
 // TODO: clean empty mappings after clean
 function cleanYamlRecursive(yaml: any, def: Definition) {
 	if (def.type === 'ref') {
+		let typeRef = def.$ref;
+
+		if (typeRef === 'io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta' && yaml.labels) {
+			cleanLabels(yaml.labels);
+		}
+
+		if (typeRef === 'io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector' && yaml.matchLabels) {
+			cleanLabels(yaml.matchLabels);
+		}
+
 		def = kube.api.definitions[def.$ref];
 		if (!def) {
 			return;
@@ -96,4 +106,9 @@ function cleanYamlRecursive(yaml: any, def: Definition) {
 			}
 		}
 	}
+}
+
+function cleanLabels(labels: any) {
+	delete labels['controller-uid'];
+	delete labels['job-name'];
 }

@@ -1,6 +1,5 @@
 # TODO
 
-- clean Job (labels controller-uid, job-name)
 - clean Pod
 - extract Pod from Deployment, StatefulSet, etc
 
