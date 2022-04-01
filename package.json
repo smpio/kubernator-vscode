@@ -77,7 +77,7 @@
         "category": "Kubernator"
       },
       {
-        "command": "kubernator.goto_pv",
+        "command": "kubernator.gotoPV",
         "title": "Go to PV",
         "category": "Kubernator"
       },
@@ -125,7 +125,7 @@
           "when": "false"
         },
         {
-          "command": "kubernator.goto_pv",
+          "command": "kubernator.gotoPV",
           "when": "false"
         },
         {
@@ -155,7 +155,7 @@
           "when": "view == kubernator.treeView && viewItem =~ /\\bobject\\b/"
         },
         {
-          "command": "kubernator.goto_pv",
+          "command": "kubernator.gotoPV",
           "when": "view == kubernator.treeView && viewItem =~ /\\bobject:PersistentVolumeClaim\\b/"
         },
         {

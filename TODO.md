@@ -1,6 +1,5 @@
 # TODO
 
-- rename goto_pv command to gotoPV
 - invalidate doesn't clear cache (if not root)
 - treeview title
 - use util.promisify
