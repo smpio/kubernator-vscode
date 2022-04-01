@@ -14,7 +14,7 @@ export function ttlCache(ttlMs: number) {
       if (!cacheStore) {
         cacheStore = (this as any)[CACHE_PROP] = {};
       }
-      let cache = cacheStore[CACHE_PROP];
+      let cache = cacheStore[propertyName];
 
       if (!cache || Date.now() - cache.time > ttlMs) {
         cache = cacheStore[CACHE_PROP] = {
