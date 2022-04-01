@@ -72,7 +72,7 @@ export default class API {
 
   async list(resource: Resource, namespace?: string): Promise<Object[]> {
     let uri = this.getResourceUri(resource, namespace);
-    let objectList = await this.fetch(uri).then(r => r.json());
+    let objectList = await this.fetch(uri).then(r => r.json()) as any;
 
     // decorate
     let apiVersion = resource.groupVersion.group.name + '/' + resource.groupVersion.version;
@@ -178,7 +178,7 @@ export default class API {
       headers['Content-Type'] = options.contentType;
     }
 
-    let response = await fetch(url, {
+    let response = await fetch(url.toString(), {
       method: method,
       body: options.body,
       headers: headers,
@@ -212,7 +212,7 @@ export class APIError extends Error {
     let message;
 
     try {
-      let errorData = await response.json();
+      let errorData = await response.json() as any;
       if (errorData.apiVersion === 'v1' && errorData.kind === 'Status') {
         message = errorData.message;
       }

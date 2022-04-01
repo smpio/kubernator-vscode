@@ -42,7 +42,7 @@ export class FSProvider implements vscode.FileSystemProvider {
     await kube.api.ready;
 
     let {path} = explodeUri(uri);
-    let obj = await kube.api.fetch(path).then(r => r.json());
+    let obj = await kube.api.fetch(path).then(r => r.json()) as any;
 
     let ctimeIso = obj.metadata?.creationTimestamp;
     let ctime = ctimeIso ? new Date(ctimeIso).getTime() : 0;
@@ -71,7 +71,7 @@ export class FSProvider implements vscode.FileSystemProvider {
 
     if (mimetype === 'application/yaml') {
       let config = vscode.workspace.getConfiguration('kubernator');
-      let obj = await kube.api.fetch(path).then(r => r.json());
+      let obj = await kube.api.fetch(path).then(r => r.json()) as any;
 
       if (!config.showManagedFields && obj.metadata) {
         delete obj.metadata.managedFields;
