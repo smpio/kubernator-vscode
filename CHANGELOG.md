@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - "clean" now removes empty objects
 - improved Pod manifest cleaning
 - added status field near deployments, ds, etc
+- fixed object icons in tree, added colors depending on status
+- added status text to objects in tree
 
 ## [0.4.1] - 2021-07-13
 - open created manifest (command `Kubernator: Create`) in non-preview editor

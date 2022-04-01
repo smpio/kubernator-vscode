@@ -210,7 +210,11 @@ export class ObjectNode extends Node {
       arguments: [this.resourceUri],
     };
     this.id = nodeID.object(obj);
-    this.description = getObjectDecorator(obj);
+
+    let decorator = getObjectDecorator(obj);
+    let color = decorator?.color && new vscode.ThemeColor(decorator.color);
+    this.description = decorator?.text;
+    this.iconPath = new vscode.ThemeIcon('debug-breakpoint-data-unverified', color);
   }
 
   getChildren() {
@@ -227,7 +231,7 @@ class ErrorNode extends Node {
     super('Error: ' + err.message, vscode.TreeItemCollapsibleState.None);
     this.tooltip = err.message;
     this.contextValue = 'leaf error';
-    // this.iconPath = new vscode.ThemeIcon('error', new vscode.ThemeColor('errorForeground'));
+    this.iconPath = new vscode.ThemeIcon('error', new vscode.ThemeColor('errorForeground'));
   }
 
   getChildren() {
@@ -261,7 +265,7 @@ const nodeID = {
   object: (obj: kube.Object) => nodeID.resource(kube.api.getResource(obj), obj.metadata.namespace) + ':' + obj.metadata.name,
 };
 
-function getObjectDecorator (obj: any): string|undefined {
+function getObjectDecorator (obj: any): ObjectDecorator|undefined {
   let s = obj.status;
   if (s) {
     let replicas = s.replicas ?? s.desiredNumberScheduled;
@@ -269,14 +273,47 @@ function getObjectDecorator (obj: any): string|undefined {
 
     if (replicas !== undefined) {
       if (ready !== undefined) {
-        return `${ready}/${replicas}`;
+        return {
+          text: `${ready}/${replicas}`,
+          color: ready === replicas ? 'notebookStatusSuccessIcon.foreground' : 'notebookStatusRunningIcon.foreground',
+        };
       } else {
-        return `${replicas}`;
+        return {text: `${replicas}`};
       }
     }
 
-    if (s.succeeded) {
-      return '✓';
+    if (s.succeeded !== undefined) {
+      if (s.succeeded) {
+        return decorators.success;
+      } else {
+        return {
+          text: '✗',
+          color: 'notebookStatusErrorIcon.foreground',
+        };
+      }
+    }
+
+    if (s.phase !== undefined) {
+      if (s.phase === 'Bound') {
+        return decorators.success;
+      } else {
+        return {
+          text: s.phase,
+          color: 'notebookStatusRunningIcon.foreground',
+        };
+      }
     }
   }
 }
+
+interface ObjectDecorator {
+  text?: string;
+  color?: string;
+}
+
+const decorators = {
+  success: {
+    text: '✓',
+    color: 'notebookStatusSuccessIcon.foreground',
+  },
+};
