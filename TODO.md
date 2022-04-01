@@ -2,7 +2,6 @@
 
 - invalidate doesn't clear cache (if not root)
 - treeview title
-- use util.promisify
 - AgentOptions socketPath update
 - bug:
   1. open CronJob (hereinafter the "cj1")

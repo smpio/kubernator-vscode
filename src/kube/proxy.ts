@@ -1,12 +1,16 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import * as child_process from 'child_process';
 import fetch from 'node-fetch';
 import { promisify } from 'util';
 import { Agent, AgentOptions } from 'http';
-import { spawn, ChildProcess } from 'child_process';
+import { ChildProcess } from 'child_process';
 
-const exec = promisify(require('child_process').exec);
+const exec = promisify(child_process.exec);
+const stat = promisify(fs.stat);
+const unlink = promisify(fs.unlink);
+const timeout = promisify(setTimeout);
 
 const SOCKET_CREATE_TIMEOUT = 10000;
 const API_READY_TIMEOUT = 10000;
@@ -77,7 +81,7 @@ async function spawnReady(cmd: string[], socketPath: string): Promise<ChildProce
 
 function spawnSocket(cmd: string[], socketPath: string): Promise<ChildProcess> {
   return new Promise((resolve, rejectOrig) => {
-    let child = spawn(cmd[0], cmd.slice(1));
+    let child = child_process.spawn(cmd[0], cmd.slice(1));
     let resolved = false;
 
     function reject(err: Error) {
@@ -116,30 +120,6 @@ function spawnSocket(cmd: string[], socketPath: string): Promise<ChildProcess> {
       reject(new Error(`Timeout waiting for ${cmd} to create socket`));
     }, SOCKET_CREATE_TIMEOUT);
   });
-}
-
-async function timeout(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function stat(path: string) {
-  return new Promise((resolve, reject) => fs.stat(path, (err, stats) => {
-    if (err) {
-      reject(err);
-    } else {
-      resolve(stats);
-    }
-  }));
-}
-
-async function unlink(path: string) {
-  return new Promise((resolve, reject) => fs.unlink(path, (err) => {
-    if (err) {
-      reject(err);
-    } else {
-      resolve(undefined);
-    }
-  }));
 }
 
 async function unlinkSafe(path: string) {
