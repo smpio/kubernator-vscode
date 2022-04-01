@@ -30,6 +30,10 @@ export class TreeDataProvider implements vscode.TreeDataProvider<Node> {
   }
 
   invalidate(element?: Node) {
+    if (!element) {
+      // invalidate cache
+      this.root = new RootNode();
+    }
     this._onDidChangeTreeData.fire(element);
   }
 }

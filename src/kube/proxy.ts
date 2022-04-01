@@ -2,21 +2,26 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import fetch from 'node-fetch';
+import { promisify } from 'util';
 import { Agent, AgentOptions } from 'http';
 import { spawn, ChildProcess } from 'child_process';
+
+const exec = promisify(require('child_process').exec);
 
 const SOCKET_CREATE_TIMEOUT = 10000;
 const API_READY_TIMEOUT = 10000;
 
 export interface Proxy {
+  context: string;
   socketPath: string;
   dispose: () => void;
 }
 
-export async function startProxy(): Promise<Proxy> {
+export async function startProxy(context: string): Promise<Proxy> {
   let socketPath = path.join(os.tmpdir(), `kubectl-proxy-${process.pid}.sock`);
-  let cmd = ['kubectl', 'proxy', `--unix-socket=${socketPath}`];
+  let cmd = ['kubectl', '--context', context, 'proxy', '--unix-socket', socketPath];
   let disposed = false;
+  console.log(`Running ${cmd.join(' ')}`);
 
   unlinkSafe(socketPath);
   let child = await spawnReady(cmd, socketPath);
@@ -33,13 +38,24 @@ export async function startProxy(): Promise<Proxy> {
   }
 
   return {
+    context,
     socketPath,
     dispose: () => {
       disposed = true;
       child.kill();
     },
   };
-};
+}
+
+export async function getDefaultContext(): Promise<string> {
+  const { stdout } = await exec('kubectl config current-context');
+  return stdout.trim();
+}
+
+export async function getContexts(): Promise<string[]> {
+  const { stdout } = await exec('kubectl config get-contexts -oname');
+  return stdout.split('\n').slice(0, -1);
+}
 
 async function spawnReady(cmd: string[], socketPath: string): Promise<ChildProcess> {
   let child = await spawnSocket(cmd, socketPath);
@@ -129,7 +145,7 @@ async function unlink(path: string) {
 async function unlinkSafe(path: string) {
   try {
     return await unlink(path);
-  } catch(err) {
+  } catch(err: any) {
     if (err.code !== 'ENOENT') {
       throw err;
     }

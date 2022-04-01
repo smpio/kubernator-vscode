@@ -95,6 +95,11 @@
         "command": "kubernator.shell",
         "title": "Shell",
         "category": "Kubernator"
+      },
+      {
+        "command": "kubernator.switchContext",
+        "title": "Switch context",
+        "category": "Kubernator"
       }
     ],
     "menus": {

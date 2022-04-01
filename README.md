@@ -8,10 +8,11 @@ Kubernetes object tree viewer and manifest editor. Lightweight and fast, compare
 ## Features
 
 * view your cluster objects grouped by namespace, including Custom Resources
-* edit object manifests and apply them to your cluster
-* create, delete objects
+* edit, create, delete object manifests and apply them to your cluster
 * clean object manifest, stripping read-only fields and fields with default values
 * RBAC friendly
+* multilpe clusters, but only one active per vscode instance for solidity
+* uses `kubectl proxy` to be fast and friendly
 
 
 ## Requirements

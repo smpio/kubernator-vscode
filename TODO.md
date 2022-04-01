@@ -1,6 +1,10 @@
 # TODO
 
-- multicluster (but one cluster per vscode instance, because no cluster in manifests)
+- rename goto_pv command to gotoPV
+- invalidate doesn't clear cache (if not root)
+- treeview title
+- use util.promisify
+- AgentOptions socketPath update
 - bug:
   1. open CronJob (hereinafter the "cj1")
   2. "Clean" it

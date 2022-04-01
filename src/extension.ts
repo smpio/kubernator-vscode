@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as kube from './kube';
-import { startProxy, Proxy } from './kube/proxy';
+import { startProxy, Proxy, getContexts, getDefaultContext } from './kube/proxy';
 import { TreeDataProvider, Node, ObjectNode } from './TreeDataProvider';
 import { FSProvider } from './FSProvider';
 import { createObjectFromActiveEditor } from './commands/create';
@@ -9,23 +9,47 @@ import { deleteObjectFromActiveEditor } from './commands/delete';
 import { revealObjectInActiveEditor } from './commands/reveal';
 import { startShell } from './commands/shell';
 
+const switchContextCommandId = 'kubernator.switchContext';
+
 export async function activate(context: vscode.ExtensionContext) {
-	let d = context.subscriptions.push.bind(context.subscriptions);
+	let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+	let treeDataProvider = new TreeDataProvider();
 	let proxy: Proxy|null = null;
 
-	let treeDataProvider = new TreeDataProvider();
+	let d = context.subscriptions.push.bind(context.subscriptions);
 
-	async function reconfigure() {
+	d(statusBarItem);
+	statusBarItem.command = switchContextCommandId;
+	statusBarItem.text = 'Kubernating...';
+	statusBarItem.show();
+
+	async function reconfigure(ctx?: string) {
 		let config = vscode.workspace.getConfiguration('kubernator');
 
-		if (config.apiURL) {
+		if (!ctx && config.apiURL) {
 			kube.api.configure({apiURL: config.apiURL});
+			statusBarItem.text = config.apiURL;
 		} else {
+			if (proxy && ctx && proxy.context !== ctx) {
+				proxy.dispose();
+				proxy = null;
+			}
+
+			if (!ctx) {
+				if (proxy) {
+					ctx = proxy.context;
+				} else {
+					ctx = await getDefaultContext();
+				}
+			}
+
 			if (!proxy) {
-				proxy = await startProxy();
+				proxy = await startProxy(ctx);
 				d(proxy);
 			}
+
 			kube.api.configure({socketPath: proxy.socketPath});
+			statusBarItem.text = ctx;
 		}
 
 		treeDataProvider.invalidate();
@@ -35,7 +59,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	d(vscode.workspace.onDidChangeConfiguration(e => {
 		if (e.affectsConfiguration('kubernator')) {
-			reconfigure();
+			reconfigure(proxy?.context);
 		}
 	}));
 
@@ -114,6 +138,38 @@ export async function activate(context: vscode.ExtensionContext) {
 		(node: ObjectNode) => vscode.commands.executeCommand('vscode.open', node.resourceUri))));
 
 	d(vscode.commands.registerCommand('kubernator.shell', handleCommandErrors(startShell)));
+
+	d(vscode.commands.registerCommand(switchContextCommandId, handleCommandErrors(async () => {
+		let config = vscode.workspace.getConfiguration('kubernator');
+
+		let items: ContextPickItem[] = (await getContexts()).map(ctx => ({
+			label: ctx,
+		}));
+		if (config.apiURL) {
+			items.push({
+				label: config.apiURL,
+				isApiURL: true,
+				description: 'Use API URL',
+			});
+		}
+		let quickPick = vscode.window.createQuickPick<ContextPickItem>();
+		quickPick.items = items;
+		quickPick.onDidChangeSelection(handleCommandErrors(async selection => {
+			if (!selection[0]) {
+				return;
+			}
+
+			let ctx = selection[0].label;
+			if (selection[0].isApiURL) {
+				ctx = undefined;
+			}
+
+			await reconfigure(ctx);
+			quickPick.hide();
+		}));
+		quickPick.onDidHide(() => quickPick.dispose());
+		quickPick.show();
+	})));
 }
 
 export function deactivate() {
@@ -124,8 +180,12 @@ function handleCommandErrors<F extends (...a: any) => any>(fn: F): (...a: Parame
 		try {
 			let ret = await Promise.resolve(fn.apply(this, a));
 			return ret;
-		} catch (err) {
+		} catch (err: any) {
 			vscode.window.showErrorMessage(err.message);
 		}
 	};
+}
+
+interface ContextPickItem extends vscode.QuickPickItem {
+	isApiURL?: boolean;
 }
