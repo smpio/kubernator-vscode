@@ -96,11 +96,11 @@ export async function activate(context: vscode.ExtensionContext) {
 			await fsProvider.delete(node.resourceUri, {recursive: false});
 			treeDataProvider.invalidate(node.getParent());
 		} else {
-			deleteObjectFromActiveEditor();
+			deleteObjectFromActiveEditor(treeDataProvider);
 		}
 	})));
 
-	d(vscode.commands.registerCommand('kubernator.create', handleCommandErrors(createObjectFromActiveEditor)));
+	d(vscode.commands.registerCommand('kubernator.create', handleCommandErrors(createObjectFromActiveEditor.bind(null, treeDataProvider))));
 	d(vscode.commands.registerCommand('kubernator.clean', handleCommandErrors(cleanObjectInActiveEditor)));
 
 	d(vscode.commands.registerCommand('kubernator.gotoPV', handleCommandErrors(async (node: ObjectNode) => {

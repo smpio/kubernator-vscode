@@ -2,8 +2,9 @@ import * as vscode from 'vscode';
 import * as yaml from '../yaml';
 import * as kube from '../kube';
 import { objectUri, closeActiveEditor } from '../util';
+import { ObjectNode, TreeDataProvider } from '../TreeDataProvider';
 
-export async function createObjectFromActiveEditor() {
+export async function createObjectFromActiveEditor(treeDataProvider: TreeDataProvider) {
 	let editor = vscode.window.activeTextEditor;
 	if (!editor) {
 		return;
@@ -28,4 +29,9 @@ export async function createObjectFromActiveEditor() {
 
 	closeActiveEditor();
 	vscode.window.showTextDocument(objectUri(obj), { preview: false });
+
+	if (typeof obj === 'object' && obj.metadata) {
+		let parent = new ObjectNode(obj).getParent();
+		treeDataProvider.invalidate(parent);
+	}
 }
