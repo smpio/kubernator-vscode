@@ -210,6 +210,7 @@ export class ObjectNode extends Node {
       arguments: [this.resourceUri],
     };
     this.id = nodeID.object(obj);
+    this.description = getObjectDecorator(obj);
   }
 
   getChildren() {
@@ -259,3 +260,23 @@ const nodeID = {
   resource: (resource: kube.Resource, ns?: string) => nodeID.group(resource.groupVersion.group, ns) + ':' + resource.kind,
   object: (obj: kube.Object) => nodeID.resource(kube.api.getResource(obj), obj.metadata.namespace) + ':' + obj.metadata.name,
 };
+
+function getObjectDecorator (obj: any): string|undefined {
+  let s = obj.status;
+  if (s) {
+    let replicas = s.replicas ?? s.desiredNumberScheduled;
+    let ready = s.readyReplicas ?? s.numberReady;
+
+    if (replicas !== undefined) {
+      if (ready !== undefined) {
+        return `${ready}/${replicas}`;
+      } else {
+        return `${replicas}`;
+      }
+    }
+
+    if (s.succeeded) {
+      return '✓';
+    }
+  }
+}
