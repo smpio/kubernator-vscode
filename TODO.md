@@ -1,12 +1,12 @@
 # TODO
 
 - remove `await kube.api.ready`
-- if object is changed during save, try to save if it is safe (automerge) https://code.visualstudio.com/docs/getstarted/tips-and-tricks#_preventing-dirty-writes
-- compare with saved (compare dirty)
+- if object is changed during save, try to save if it is safe (automerge) https://code.visualstudio.com/docs/getstarted/tips-and-tricks#_preventing-dirty-writes (SEE BRANCHES)
+- compare with saved (compare dirty) (SEE BRANCHES)
 
 - extract Pod from Deployment, StatefulSet, etc
 - update packages (see new `yo code` output)
-- on save conflict add option to overwrite (this can be done by removing resourceVersion)
+- on save conflict add option to overwrite (this can be done by removing resourceVersion) (SEE BRANCHES)
 - special view: some objects can have special view (simple describe, or complex graphs)
 
 - fsprovider -> readDirectory (for topbar nav)
