@@ -44,6 +44,7 @@ Important commands:
 * `Kubernator: Clean`: clean manifest in active editor, deleting read-only fields and fields with defaults
 * `Kubernator: Delete`: delete object in active editor
 * `Kubernator: Reveal`: reveal object in active editor
+* `Kubernator: Switch context`: select `kubectl` context
 * `Kubernator: Reconfigure`: reload API resources and manifest schema (executed on startup, maybe required after CRD installation or cluster upgrade)
 
 
