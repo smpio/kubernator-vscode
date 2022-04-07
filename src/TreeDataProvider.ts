@@ -305,7 +305,7 @@ function getObjectDecorator (obj: any): ObjectDecorator|undefined {
     }
 
     if (s.phase !== undefined) {
-      if (s.phase === 'Bound' || s.phase === 'Succeeded') {
+      if (s.phase === 'Bound' || s.phase === 'Succeeded' || s.phase === 'Active') {
         return decorators.success;
       } else {
         return {
