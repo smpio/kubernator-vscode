@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import * as kube from './kube';
-import { startProxy, Proxy, getContexts, getDefaultContext } from './kube/proxy';
 import { TreeDataProvider, Node, ObjectNode } from './TreeDataProvider';
 import { FSProvider } from './FSProvider';
 import { createObjectFromActiveEditor } from './commands/create';
@@ -17,7 +16,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		return disposable;
 	}
 
-	let proxy: Proxy|null = null;
+	let proxy: kube.Proxy|null = null;
 	let statusBarItem = d(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
 	let fsProvider = new FSProvider();
 	let treeDataProvider = new TreeDataProvider();
@@ -50,12 +49,12 @@ export async function activate(context: vscode.ExtensionContext) {
 				if (proxy) {
 					ctx = proxy.context;
 				} else {
-					ctx = await getDefaultContext();
+					ctx = await kube.getDefaultContext();
 				}
 			}
 
 			if (!proxy) {
-				proxy = await startProxy(ctx);
+				proxy = await kube.startProxy(ctx);
 				d(proxy);
 			}
 
@@ -131,7 +130,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	d(vscode.commands.registerCommand(switchContextCommandId, handleCommandErrors(async () => {
 		let config = vscode.workspace.getConfiguration('kubernator');
 
-		let items: ContextPickItem[] = (await getContexts()).map(ctx => ({
+		let items: ContextPickItem[] = (await kube.getContexts()).map(ctx => ({
 			label: ctx,
 		}));
 		if (config.apiURL) {

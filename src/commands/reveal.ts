@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as yaml from '../yaml';
+import * as kube from '../kube';
 import { Node, ObjectNode } from '../TreeDataProvider';
 
 export function revealObjectInActiveEditor(treeView: vscode.TreeView<Node>) {
@@ -10,7 +10,7 @@ export function revealObjectInActiveEditor(treeView: vscode.TreeView<Node>) {
 
 	let document = editor.document;
 	let text = document.getText();
-	let obj = yaml.parse(text);
+	let obj = kube.yaml.parse(text);
 
 	if (typeof obj !== 'object') {
 		return;

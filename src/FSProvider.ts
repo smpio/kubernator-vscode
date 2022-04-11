@@ -1,5 +1,4 @@
 import * as nodePath from 'path';
-import * as yaml from './yaml';
 import * as vscode from 'vscode';
 import * as kube from './kube';
 import * as interfaces from './interfaces';
@@ -84,7 +83,7 @@ export class FSProvider implements vscode.FileSystemProvider {
         }
       }
 
-      let text = yaml.stringify(obj);
+      let text = kube.yaml.stringify(obj);
       return Buffer.from(text);
     }
 
@@ -103,7 +102,7 @@ export class FSProvider implements vscode.FileSystemProvider {
 
     // we could use raw content with kube.api.put,
     // but we need to apply some manifest preprocessing first
-    let obj = yaml.parse(content.toString());
+    let obj = kube.yaml.parse(content.toString());
 
     await kube.api.ready;
     let {path} = explodeUri(uri);

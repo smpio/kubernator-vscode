@@ -222,7 +222,6 @@
   "devDependencies": {
     "@types/glob": "^7.2.0",
     "@types/node": "14.x",
-    "@types/node-fetch": "^2.6.1",
     "@types/vscode": "^1.66.0",
     "@typescript-eslint/eslint-plugin": "^5.16.0",
     "@typescript-eslint/parser": "^5.16.0",
@@ -232,7 +231,6 @@
     "vsce": "latest"
   },
   "dependencies": {
-    "node-fetch": "^2.6.7",
-    "yaml": "^1.10.2"
+    "@smpio/kube": "^0.9.0"
   }
 }
