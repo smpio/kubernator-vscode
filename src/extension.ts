@@ -142,7 +142,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 		let quickPick = vscode.window.createQuickPick<ContextPickItem>();
 		quickPick.items = items;
-		quickPick.onDidChangeSelection(handleCommandErrors(selection => {
+		quickPick.onDidChangeSelection(handleCommandErrors(async selection => {
 			if (!selection[0]) {
 				return;
 			}
@@ -150,9 +150,9 @@ export async function activate(context: vscode.ExtensionContext) {
 			quickPick.hide();
 
 			if (selection[0].isApiURL) {
-				reconfigure();
+				await reconfigure();
 			} else {
-				reconfigure(selection[0].label);
+				await reconfigure(selection[0].label);
 			}
 		}));
 		quickPick.onDidHide(() => quickPick.dispose());
