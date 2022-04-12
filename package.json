@@ -232,6 +232,6 @@
     "vsce": "latest"
   },
   "dependencies": {
-    "@smpio/kube": "^0.9.0"
+    "@smpio/kube": "^0.9.2"
   }
 }
