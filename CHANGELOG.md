@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.5.2] - Unreleased
 - extract @smpio/kube package
 - handle errors on context switching
+- show "Kubernating..." on context switching
 
 ## [0.5.1] - 2022-04-11
 - updated dependencies

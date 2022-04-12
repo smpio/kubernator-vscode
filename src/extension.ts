@@ -148,6 +148,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			}
 
 			quickPick.hide();
+			statusBarItem.text = 'Kubernating...';
 
 			if (selection[0].isApiURL) {
 				await reconfigure();
