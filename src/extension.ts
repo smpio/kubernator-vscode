@@ -90,7 +90,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}, 1000);
 	}));
 
-	d(vscode.commands.registerCommand('kubernator.delete', handleCommandErrors(async (node?: ObjectNode) => {
+	d(vscode.commands.registerCommand('kubernator.delete', handleErrors(async (node?: ObjectNode) => {
 		if (node) {
 			await fsProvider.delete(node.resourceUri, {recursive: false});
 			treeDataProvider.invalidate(node.getParent());
@@ -99,10 +99,10 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	})));
 
-	d(vscode.commands.registerCommand('kubernator.create', handleCommandErrors(createObjectFromActiveEditor)));
-	d(vscode.commands.registerCommand('kubernator.clean', handleCommandErrors(cleanObjectInActiveEditor)));
+	d(vscode.commands.registerCommand('kubernator.create', handleErrors(createObjectFromActiveEditor)));
+	d(vscode.commands.registerCommand('kubernator.clean', handleErrors(cleanObjectInActiveEditor)));
 
-	d(vscode.commands.registerCommand('kubernator.gotoPV', handleCommandErrors(async (node: ObjectNode) => {
+	d(vscode.commands.registerCommand('kubernator.gotoPV', handleErrors(async (node: ObjectNode) => {
 		let obj = node.obj as any;
 		let pvName = obj.spec.volumeName;
 		if (!pvName) {
@@ -120,14 +120,14 @@ export async function activate(context: vscode.ExtensionContext) {
 		});
 	})));
 
-	d(vscode.commands.registerCommand('kubernator.reveal', handleCommandErrors(() => revealObjectInActiveEditor(treeView))));
+	d(vscode.commands.registerCommand('kubernator.reveal', handleErrors(() => revealObjectInActiveEditor(treeView))));
 
-	d(vscode.commands.registerCommand('kubernator.edit', handleCommandErrors(
+	d(vscode.commands.registerCommand('kubernator.edit', handleErrors(
 		(node: ObjectNode) => vscode.commands.executeCommand('vscode.open', node.resourceUri))));
 
-	d(vscode.commands.registerCommand('kubernator.shell', handleCommandErrors(startShell)));
+	d(vscode.commands.registerCommand('kubernator.shell', handleErrors(startShell)));
 
-	d(vscode.commands.registerCommand(switchContextCommandId, handleCommandErrors(async () => {
+	d(vscode.commands.registerCommand(switchContextCommandId, handleErrors(async () => {
 		let config = vscode.workspace.getConfiguration('kubernator');
 
 		let items: ContextPickItem[] = (await kube.getContexts()).map(ctx => ({
@@ -142,7 +142,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 		let quickPick = vscode.window.createQuickPick<ContextPickItem>();
 		quickPick.items = items;
-		quickPick.onDidChangeSelection(handleCommandErrors(async selection => {
+		quickPick.onDidChangeSelection(handleErrors(async selection => {
 			if (!selection[0]) {
 				return;
 			}
@@ -163,7 +163,7 @@ export async function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
 }
 
-function handleCommandErrors<F extends (...a: any) => any>(fn: F): (...a: Parameters<F>) => Promise<ReturnType<F>> {
+function handleErrors<F extends (...a: any) => any>(fn: F): (...a: Parameters<F>) => Promise<ReturnType<F>> {
 	return async function (this: any, ...a: Parameters<F>) {
 		try {
 			let ret = await Promise.resolve(fn.apply(this, a));

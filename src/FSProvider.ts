@@ -38,8 +38,6 @@ export class FSProvider implements vscode.FileSystemProvider {
       };
     }
 
-    await kube.api.ready;
-
     let {path} = explodeUri(uri);
     let obj = await kube.api.fetch(path).then(r => r.json()) as any;
 
@@ -65,7 +63,6 @@ export class FSProvider implements vscode.FileSystemProvider {
   }
 
   async readFile(uri: vscode.Uri): Promise<Uint8Array> {
-    await kube.api.ready;
     let {path, mimetype} = explodeUri(uri);
 
     if (mimetype === 'application/yaml') {
@@ -104,14 +101,12 @@ export class FSProvider implements vscode.FileSystemProvider {
     // but we need to apply some manifest preprocessing first
     let obj = kube.yaml.parse(content.toString());
 
-    await kube.api.ready;
     let {path} = explodeUri(uri);
     await kube.api.put(path, JSON.stringify(obj), 'application/json');
     this.forceReloadFiles.add(uri.path);
   }
 
   async delete(uri: vscode.Uri, options: { recursive: boolean; }): Promise<void> {
-    await kube.api.ready;
     let {path} = explodeUri(uri);
     await kube.api.delete(path);
   }
