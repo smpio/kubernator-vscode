@@ -3,6 +3,7 @@ import * as kube from '../kube';
 
 
 export async function cleanObjectInActiveEditor() {
+	let config = vscode.workspace.getConfiguration('kubernator');
 	let editor = vscode.window.activeTextEditor;
 	if (!editor) {
 		return;
@@ -18,7 +19,9 @@ export async function cleanObjectInActiveEditor() {
 
 	kube.cleanObject(obj, kube.api);
 
-	text = kube.yaml.stringify(obj);
+	text = kube.yaml.stringify(obj, {
+		decodeSecrets: config.decodeSecrets
+	});
 
 	if (document.isUntitled) {
 		let all = new vscode.Range(new vscode.Position(0, 0), new vscode.Position(document.lineCount, 0));

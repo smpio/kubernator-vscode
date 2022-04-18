@@ -80,7 +80,9 @@ export class FSProvider implements vscode.FileSystemProvider {
         }
       }
 
-      let text = kube.yaml.stringify(obj);
+      let text = kube.yaml.stringify(obj, {
+        decodeSecrets: config.decodeSecrets
+      });
       return Buffer.from(text);
     }
 
