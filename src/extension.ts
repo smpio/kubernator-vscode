@@ -16,7 +16,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		return disposable;
 	}
 
-	let proxy: kube.Proxy|null = null;
+	let proxy: kube.ProxyWithContext|null = null;
 	let statusBarItem = d(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left));
 	let fsProvider = new FSProvider();
 	let treeDataProvider = new TreeDataProvider();
