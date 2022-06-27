@@ -3,7 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.5.2] - Unreleased
+## [0.5.3] - 2022-06-15
+- update @smpio/kube package
+- bugfixes
+
+## [0.5.2] - 2022-04-12
 - extract @smpio/kube package
 - handle errors on context switching
 - show "Kubernating..." on context switching
