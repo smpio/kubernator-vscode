@@ -18,7 +18,7 @@
   "keywords": [
     "kubernetes"
   ],
-  "preview": true,
+  "preview": false,
   "icon": "assets/kubernetes256.png",
   "activationEvents": [
     "onFileSystem:kube",
