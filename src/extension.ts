@@ -30,11 +30,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	}));
 
 	statusBarItem.command = switchContextCommandId;
-	statusBarItem.text = 'Kubernating...';
 	statusBarItem.show();
 
 	async function reconfigure(ctx?: string) {
 		let config = vscode.workspace.getConfiguration('kubernator');
+		statusBarItem.text = 'Kubernating...';
 
 		if (!ctx && config.apiURL) {
 			await kube.api.configure({apiURL: config.apiURL});
