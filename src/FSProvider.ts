@@ -43,8 +43,8 @@ export class FSProvider implements vscode.FileSystemProvider {
 
     let ctimeIso = obj.metadata?.creationTimestamp;
     let ctime = ctimeIso ? new Date(ctimeIso).getTime() : 0;
-    let resourceVersion = obj.metadata?.resourceVersion;
-    let mtime = resourceVersion ? ctime + parseInt(resourceVersion) : new Date().getTime();
+    let generation = obj.metadata?.generation;
+    let mtime = generation ? ctime + generation : new Date().getTime();
 
     return {
         type: vscode.FileType.File,
