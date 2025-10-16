@@ -1,7 +1,14 @@
 # TODO
 
+- clean Job `batch.kubernetes.io/controller-uid`, `batch.kubernetes.io/job-name` labels, matchLabels
+
+- pod, service port-forward
+
+- clean
+
 - if object is changed during save, try to save if it is safe (automerge) https://code.visualstudio.com/docs/getstarted/tips-and-tricks#_preventing-dirty-writes (SEE BRANCHES)
 - compare with saved (compare dirty) (SEE BRANCHES)
+- Server-Side Apply
 
 - extract Pod from Deployment, StatefulSet, etc
 - update packages (see new `yo code` output)
@@ -14,8 +21,14 @@
 - yaml schemas https://github.com/Azure/vscode-kubernetes-tools/tree/master/src/yaml-support
 
 - load resources using api group with only preferredVersion, load non-preferred when needed only
+- Open API v3
+- Aggregated Discovery https://kubernetes.io/docs/concepts/overview/kubernetes-api/#aggregated-discovery
+
 - tree quick search
 - limit concurrent requests to API - why?
+- Go to PV quick action in editor (opens PV editor)
+- Go to PVC quick action in editor (opens PVC editor)
+- reveal from editor with external yaml file
 
 
 ## Can't be done
